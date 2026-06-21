@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tiến độ KTGS – 13 Chi bộ | HQKV8</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --red:#CC0000;--red-dark:#990000;--red-light:#ffecec;
+      --gold:#D4A017;--gold-lt:#FFF8E1;
+      --navy:#003087;--navy-lt:#E8F0FE;
+      --green:#1A7A4A;--green-lt:#E8F5EE;
+      --orange:#D46B00;--orange-lt:#FFF3E0;
+      --gray1:#1C1C2E;--gray2:#3D3D5C;--gray3:#7B7B9B;
+      --gray4:#C8C8DC;--gray5:#F0F0F8;--white:#fff;
+      --sidebar-w:240px;--header-h:64px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,.08);
+      --shadow-md:0 4px 16px rgba(0,0,0,.10);
+      --radius:10px;--radius-sm:6px;
+    }
+    html,body{height:100%;font-family:'Be Vietnam Pro',sans-serif;background:var(--gray5);color:var(--gray1);font-size:14px;}
+    ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-thumb{background:var(--gray4);border-radius:3px;}
+
+    /* HEADER */
+    .header{
+      position:fixed;top:0;left:0;right:0;height:var(--header-h);
+      background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 50%,#A00000 100%);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 20px;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.25);
+    }
+    .header-left{display:flex;align-items:center;gap:14px;}
+    .logo-wrap{display:flex;align-items:center;gap:10px;}
+    .logo-hq{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#CC0000;overflow:hidden;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));}
+    .logo-hq img{width:50px;height:50px;object-fit:cover;border-radius:50%;display:block;}
+    .header-divider{width:1px;height:36px;background:rgba(255,255,255,.25);margin:0 6px;}
+    .header-title .main{font-size:14px;font-weight:700;color:#fff;}
+    .header-title .sub{font-size:11px;color:rgba(255,255,255,.85);margin-top:1px;}
+    .header-right{display:flex;align-items:center;gap:14px;}
+    .user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:24px;padding:5px 12px 5px 5px;border:1px solid rgba(255,255,255,.2);}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--red-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
+    .user-info .name{font-size:12px;font-weight:600;color:#fff;}
+    .user-info .role{font-size:10px;color:rgba(255,255,255,.8);}
+
+    /* LAYOUT */
+    .layout{display:flex;padding-top:var(--header-h);min-height:100vh;}
+
+    /* SIDEBAR */
+    .sidebar{position:fixed;left:0;top:var(--header-h);bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray4);overflow-y:auto;z-index:900;display:flex;flex-direction:column;}
+    .sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--gray3);text-transform:uppercase;padding:16px 16px 6px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--gray2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;position:relative;}
+    .nav-item:hover{background:var(--gray5);color:var(--red);}
+    .nav-item.active{background:var(--red-light);color:var(--red);font-weight:600;}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);border-radius:0 2px 2px 0;}
+    .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;}
+    .nav-badge.green{background:var(--green);}
+    .nav-badge.orange{background:var(--orange);}
+    .sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--gray4);font-size:11px;color:var(--gray3);line-height:1.6;}
+
+    /* MAIN */
+    .main{margin-left:var(--sidebar-w);flex:1;padding:20px;min-height:calc(100vh - var(--header-h));}
+
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+    .page-title{font-size:18px;font-weight:700;color:var(--gray1);}
+    .page-title span{color:var(--red);}
+    .page-subtitle{font-size:12px;color:var(--gray3);margin-top:3px;}
+
+    /* TOOLBAR */
+    .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .filter-group{display:flex;gap:4px;}
+    .tab-btn{padding:5px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--gray4);background:white;color:var(--gray3);transition:all .15s;}
+    .tab-btn.active{background:var(--red);color:white;border-color:var(--red);}
+    .tab-btn:hover:not(.active){border-color:var(--red);color:var(--red);}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+    .btn-primary{background:var(--red);color:white;}
+    .btn-primary:hover{background:var(--red-dark);}
+    .btn-outline{background:white;color:var(--gray2);border:1px solid var(--gray4);}
+    .btn-outline:hover{border-color:var(--red);color:var(--red);}
+    select.filter-select{padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--gray4);font-size:12px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray2);background:white;cursor:pointer;}
+    select.filter-select:focus{outline:none;border-color:var(--red);}
+
+    /* KPI */
+    .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+    .kpi-card{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);border-top:3px solid transparent;display:flex;align-items:center;gap:12px;}
+    .kpi-card.c-navy{border-top-color:var(--navy);}
+    .kpi-card.c-gold{border-top-color:var(--gold);}
+    .kpi-card.c-green{border-top-color:var(--green);}
+    .kpi-card.c-red{border-top-color:var(--red);}
+    .kpi-card.c-gray{border-top-color:var(--gray3);}
+    .kpi-icon{font-size:28px;flex-shrink:0;}
+    .kpi-val{font-size:26px;font-weight:700;}
+    .c-navy .kpi-val{color:var(--navy);} .c-gold .kpi-val{color:var(--gold);}
+    .c-green .kpi-val{color:var(--green);} .c-red .kpi-val{color:var(--red);}
+    .c-gray .kpi-val{color:var(--gray3);}
+    .kpi-lbl{font-size:11px;color:var(--gray3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+
+    /* CARD */
+    .card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:16px;}
+    .card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--gray5);}
+    .card-title{font-size:13px;font-weight:700;color:var(--gray1);}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;}
+    .badge-green{background:var(--green-lt);color:var(--green);}
+    .badge-navy{background:var(--navy-lt);color:var(--navy);}
+    .badge-gold{background:var(--gold-lt);color:#8B6800;}
+    .badge-red{background:var(--red-light);color:var(--red);}
+    .badge-gray{background:var(--gray5);color:var(--gray3);}
+
+    /* MAIN TABLE */
+    .tbl-wrap{overflow-x:auto;}
+    table.main-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:900px;}
+    table.main-tbl th{background:var(--gray1);color:white;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap;position:sticky;top:0;z-index:1;}
+    table.main-tbl th.left{text-align:left;}
+    table.main-tbl td{padding:9px 10px;border-bottom:1px solid var(--gray5);vertical-align:middle;}
+    table.main-tbl tr:nth-child(even) td{background:#FAFAFA;}
+    table.main-tbl tr:hover td{background:#F5F0FF;}
+
+    .chi-bo-name{font-weight:600;color:var(--gray1);font-size:12px;}
+    .chi-bo-code{font-size:10px;color:var(--gray3);margin-top:1px;}
+
+    /* Cell status */
+    .cell-kt{text-align:center;}
+    .dot-kt{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:10px;font-weight:700;cursor:default;}
+    .dot-done{background:var(--green);color:white;}
+    .dot-progress{background:var(--gold);color:white;}
+    .dot-todo{background:var(--gray4);color:var(--gray2);}
+    .dot-none{background:transparent;color:transparent;}
+    .dot-overdue{background:var(--red);color:white;}
+
+    /* Progress bar */
+    .prog-wrap{min-width:90px;}
+    .prog-bar{background:var(--gray4);border-radius:4px;height:7px;overflow:hidden;margin-bottom:3px;}
+    .prog-fill{height:100%;border-radius:4px;}
+    .prog-fill.g{background:var(--green);}
+    .prog-fill.y{background:var(--gold);}
+    .prog-fill.r{background:var(--red);}
+    .prog-pct{font-size:10px;color:var(--gray3);font-weight:600;}
+
+    /* Total cell */
+    td.total-cell{font-weight:700;font-size:13px;text-align:center;}
+    td.total-cell.t2{color:var(--green);}
+    td.total-cell.t1{color:var(--gold);}
+    td.total-cell.t0{color:var(--gray3);}
+
+    /* ROW GROUP HEADER */
+    tr.group-row td{background:var(--navy);color:white;font-weight:700;font-size:11px;padding:6px 10px;letter-spacing:.5px;}
+
+    /* Legend */
+    .legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--gray5);}
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray2);}
+
+    /* Tooltip-like title already on dot */
+
+    /* Detail panel */
+    .detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px;}
+    .detail-card{background:var(--gray5);border-radius:var(--radius-sm);padding:12px;border-left:3px solid var(--navy);}
+    .detail-card.kt{border-left-color:var(--navy);}
+    .detail-card.gs{border-left-color:#0097A7;}
+    .detail-card-title{font-size:11px;font-weight:700;color:var(--gray1);margin-bottom:6px;line-height:1.4;}
+    .detail-card-meta{font-size:10px;color:var(--gray3);line-height:1.6;}
+    .detail-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px;}
+    .db-kt{background:var(--navy-lt);color:var(--navy);}
+    .db-gs{background:#E0F7FA;color:#006064;}
+    .db-done{background:var(--green-lt);color:var(--green);}
+    .db-todo{background:var(--gold-lt);color:#8B6800;}
+    .db-late{background:var(--red-light);color:var(--red);}
+
+    .page-footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--gray4);text-align:center;font-size:11px;color:var(--gray3);line-height:1.8;}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-wrap">
+      <div class="logo-hq" title="Hải quan Việt Nam">
+        <img src="../logo-haiquan.png" alt="Hải quan Việt Nam"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+        <svg viewBox="0 0 100 100" style="display:none;width:50px;height:50px;">
+          <circle cx="50" cy="50" r="49" fill="#CC0000"/>
+          <circle cx="50" cy="50" r="44" fill="#003087"/>
+          <text x="50" y="60" font-family="Arial" font-size="26" font-weight="900" fill="#FFD700" text-anchor="middle">HQ</text>
+        </svg>
+      </div>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-title">
+      <div class="main">THEO DÕI KẾ HOẠCH & TIẾN ĐỘ KIỂM TRA, GIÁM SÁT</div>
+      <div class="sub">13 Chi bộ trực thuộc – Đảng ủy Chi cục Hải quan Khu vực VIII · Năm 2026</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="user-badge">
+      <div class="user-avatar">K8</div>
+      <div class="user-info">
+        <div class="name">UBKT Đảng ủy KV8</div>
+        <div class="role">Thường trực UBKT</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section-label">Tổng quan</div>
+    <a class="nav-item" href="../index.html"><span class="nav-icon">🏠</span> Dashboard</a>
+    <div class="sidebar-section-label">Nghiệp vụ</div>
+    <a class="nav-item" href="ph1-library.html"><span class="nav-icon">📚</span> Thư viện nghiệp vụ</a>
+    <a class="nav-item" href="ph2-programs.html"><span class="nav-icon">📋</span> Chương trình KTGS</a>
+    <a class="nav-item" href="ph3-cases.html"><span class="nav-icon">📁</span> Hồ sơ cuộc KTGS<span class="nav-badge">6</span></a>
+    <a class="nav-item" href="ph4-conclusions.html"><span class="nav-icon">✅</span> Theo dõi kết luận<span class="nav-badge orange">5</span></a>
+    <a class="nav-item" href="ph5-reports.html"><span class="nav-icon">📊</span> Báo cáo & Thống kê</a>
+    <a class="nav-item active" href="theo-doi-chibo.html"><span class="nav-icon">🗂️</span> Tiến độ KTGS Chi bộ<span class="nav-badge green">13</span></a>
+    <div class="sidebar-section-label">Hệ thống</div>
+    <a class="nav-item" href="#"><span class="nav-icon">👥</span> Quản lý người dùng</a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Cài đặt hệ thống</a>
+    <div class="sidebar-footer">
+      <div>Phiên bản: 1.0.0</div>
+      <div>Nhiệm kỳ: 2025 – 2030</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">🗂️ Tiến độ KTGS – <span>13 Chi bộ</span></div>
+        <div class="page-subtitle">Dữ liệu: Chương trình KTGS năm 2026 · UBKT Đảng ủy Chi cục HQKV8</div>
+      </div>
+      <div class="toolbar">
+        <select class="filter-select" onchange="filterQuarter(this.value)">
+          <option value="q2">Quý II – 2026</option>
+          <option value="all">Cả năm 2026</option>
+        </select>
+        <div class="filter-group">
+          <button class="tab-btn active" onclick="filterType('all',this)">Tất cả</button>
+          <button class="tab-btn" onclick="filterType('kt',this)">Kiểm tra</button>
+          <button class="tab-btn" onclick="filterType('gs',this)">Giám sát</button>
+        </div>
+        <button class="btn btn-outline" onclick="window.print()">🖨 In</button>
+        <button class="btn btn-primary" onclick="alert('Tính năng xuất Excel sẽ tích hợp ở Sprint 10')">⬇ Xuất Excel</button>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div class="kpi-card c-navy">
+        <div class="kpi-icon">📋</div>
+        <div><div class="kpi-val">11</div><div class="kpi-lbl">Tổng cuộc KTGS Q.II</div></div>
+      </div>
+      <div class="kpi-card c-green">
+        <div class="kpi-icon">✅</div>
+        <div><div class="kpi-val">6</div><div class="kpi-lbl">Đã hoàn thành</div></div>
+      </div>
+      <div class="kpi-card c-gold">
+        <div class="kpi-icon">⏳</div>
+        <div><div class="kpi-val">3</div><div class="kpi-lbl">Đang thực hiện</div></div>
+      </div>
+      <div class="kpi-card c-red">
+        <div class="kpi-icon">⚠️</div>
+        <div><div class="kpi-val">2</div><div class="kpi-lbl">Chưa / Quá hạn</div></div>
+      </div>
+      <div class="kpi-card c-gray">
+        <div class="kpi-icon">⭕</div>
+        <div><div class="kpi-val">4</div><div class="kpi-lbl">Chi bộ chưa có cuộc</div></div>
+      </div>
+    </div>
+
+    <!-- BẢNG TỔNG HỢP -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📊 Bảng tổng hợp kế hoạch KTGS – 13 Chi bộ (Quý II.2026)</div>
+        <div style="display:flex;gap:6px;">
+          <span class="badge badge-navy">8 cuộc Kiểm tra</span>
+          <span class="badge" style="background:#E0F7FA;color:#006064;">3 cuộc Giám sát</span>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="main-tbl" id="mainTable">
+          <thead>
+            <tr>
+              <th class="left" style="min-width:55px;">STT</th>
+              <th class="left" style="min-width:190px;">Chi bộ</th>
+              <!-- BCH -->
+              <th title="BCH KT CT50 – Kiểm tra thực hiện CT số 50-CT/TW">BCH·CT50<br><span style="font-weight:400;font-size:9px;">KT</span></th>
+              <!-- BTV -->
+              <th title="BTV KT QĐ37 – Kiểm tra QĐ 37, 144, 189">BTV·QĐ37<br><span style="font-weight:400;font-size:9px;">KT</span></th>
+              <th title="BTV KT QĐ179 – Kiểm tra QĐ 179, 114">BTV·QĐ179<br><span style="font-weight:400;font-size:9px;">KT</span></th>
+              <!-- UBKT -->
+              <th title="UBKT KT – Kiểm tra thực hiện nhiệm vụ KTGS và thi hành kỷ luật">UBKT·KTGS<br><span style="font-weight:400;font-size:9px;">KT</span></th>
+              <th title="UBKT KT Tài chính Đảng">UBKT·TCĐ<br><span style="font-weight:400;font-size:9px;">KT</span></th>
+              <th title="UBKT GS NQ57 – Giám sát thực hiện NQ 57 về chuyển đổi số">UBKT·NQ57<br><span style="font-weight:400;font-size:9px;">GS</span></th>
+              <!-- Tổng -->
+              <th style="min-width:60px;">Số cuộc</th>
+              <th style="min-width:110px;">Tiến độ</th>
+              <th style="min-width:90px;">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- JS render -->
+          </tbody>
+        </table>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="dot-kt dot-done" style="width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:10px;">✓</div>Hoàn thành</div>
+        <div class="legend-item"><div class="dot-kt dot-progress" style="width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:10px;">→</div>Đang thực hiện</div>
+        <div class="legend-item"><div class="dot-kt dot-overdue" style="width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:10px;">!</div>Quá hạn</div>
+        <div class="legend-item"><div class="dot-kt dot-todo" style="width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:10px;">○</div>Chưa thực hiện</div>
+        <div class="legend-item"><span style="color:var(--gray4);font-size:16px;">–</span>&nbsp;Không trong kế hoạch</div>
+      </div>
+    </div>
+
+    <!-- CHI TIẾT CÁC CUỘC -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📁 Chi tiết các cuộc KTGS Quý II.2026</div>
+        <span class="badge badge-navy">Thẩm quyền BCH · BTV · UBKT</span>
+      </div>
+      <div class="detail-grid">
+
+        <div class="detail-card kt">
+          <div class="detail-card-title">
+            <span class="detail-badge db-kt">BCH · Kiểm tra</span> CT50-CT/TW + CT28 + NQ21<br>
+            <em style="font-size:10px;color:var(--gray3);">Nâng cao chất lượng sinh hoạt CB & kết nạp ĐV</em>
+          </div>
+          <div class="detail-card-meta">
+            🎯 <strong>Đối tượng:</strong> CB HQCK QT Móng Cái · CB HQCK cảng Vạn Gia<br>
+            👤 <strong>Trưởng đoàn:</strong> Bùi Ngọc Lợi (Chủ nhiệm UBKT)<br>
+            📅 <strong>Thời gian:</strong> Tháng 5.2026
+            <span class="detail-badge db-done">Hoàn thành</span>
+          </div>
+        </div>
+
+        <div class="detail-card kt">
+          <div class="detail-card-title">
+            <span class="detail-badge db-kt">BTV · Kiểm tra</span> QĐ37, QĐ144, QĐ189<br>
+            <em style="font-size:10px;color:var(--gray3);">Đạo đức ĐV, kiểm soát tài chính công, phòng chống tham nhũng</em>
+          </div>
+          <div class="detail-card-meta">
+            🎯 <strong>Đối tượng:</strong> CB HQCK Hoành Mô · Bí thư CB Đội PT&KTSTQ<br>
+            👤 <strong>Trưởng đoàn:</strong> Bùi Ngọc Lợi (Chủ nhiệm UBKT)<br>
+            📅 <strong>Thời gian:</strong> Tháng 5.2026
+            <span class="detail-badge db-done">Hoàn thành</span>
+          </div>
+        </div>
+
+        <div class="detail-card kt">
+          <div class="detail-card-title">
+            <span class="detail-badge db-kt">BTV · Kiểm tra</span> QĐ179, QĐ114<br>
+            <em style="font-size:10px;color:var(--gray3);">Kiểm soát quyền lực trong công tác cán bộ</em>
+          </div>
+          <div class="detail-card-meta">
+            🎯 <strong>Đối tượng:</strong> Bí thư CB HQCK cảng Hòn Gai · CB Đội KSHQ<br>
+            👤 <strong>Trưởng đoàn:</strong> Bùi Ngọc Lợi (Chủ nhiệm UBKT)<br>
+            📅 <strong>Thời gian:</strong> Tháng 5.2026
+            <span class="detail-badge db-todo">Đang TH</span>
+          </div>
+        </div>
+
+        <div class="detail-card kt">
+          <div class="detail-card-title">
+            <span class="detail-badge db-kt">UBKT · Kiểm tra</span> Nhiệm vụ KTGS & kỷ luật Đảng<br>
+            <em style="font-size:10px;color:var(--gray3);">Kiểm tra việc thực hiện NVKTGS và thi hành kỷ luật</em>
+          </div>
+          <div class="detail-card-meta">
+            🎯 <strong>Đối tượng:</strong> CB HQCK Bắc Phong Sinh · CB HQCK cảng Cẩm Phả<br>
+            👤 <strong>Trưởng đoàn:</strong> Võ Hồng Chung (Phó Chủ nhiệm UBKT)<br>
+            📅 <strong>Thời gian:</strong> Tháng 5.2026
+            <span class="detail-badge db-done">Hoàn thành</span>
+          </div>
+        </div>
+
+        <div class="detail-card kt">
+          <div class="detail-card-title">
+            <span class="detail-badge db-kt">UBKT · Kiểm tra</span> Tài chính Đảng<br>
+            <em style="font-size:10px;color:var(--gray3);">Kiểm tra công tác tài chính đảng năm 2025-2026</em>
+          </div>
+          <div class="detail-card-meta">
+            🎯 <strong>Đối tượng:</strong> CB Phòng QLRR · CB HQCK cảng Hòn Gai<br>
+            👤 <strong>Trưởng đoàn:</strong> Võ Hồng Chung (Phó Chủ nhiệm UBKT)<br>
+            📅 <strong>Thời gian:</strong> Tháng 5.2026
+            <span class="detail-badge db-todo">Đang TH</span>
+          </div>
+        </div>
+
+        <div class="detail-card gs" style="border-left-color:#0097A7;">
+          <div class="detail-card-title">
+            <span class="detail-badge db-gs">UBKT · Giám sát</span> NQ57/TW – Chuyển đổi số<br>
+            <em style="font-size:10px;color:var(--gray3);">GS thực hiện NQ57 & QĐ204 về CĐS trong cơ quan Đảng</em>
+          </div>
+          <div class="detail-card-meta">
+            🎯 <strong>Đối tượng:</strong> CB HQCK QT Móng Cái · CB HQCK Hoành Mô<br>
+            👤 <strong>Trưởng đoàn:</strong> Bùi Ngọc Lợi (Chủ nhiệm UBKT)<br>
+            📅 <strong>Thời gian:</strong> Tháng 5.2026
+            <span class="detail-badge db-late">Quá hạn</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CHI BỘ CHƯA CÓ CUỘC -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⭕ Chi bộ chưa có cuộc KTGS trong Quý II.2026</div>
+        <span class="badge badge-gray">4 Chi bộ</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;">
+        <div style="background:var(--gray5);border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;color:var(--gray2);">
+          <div style="font-weight:600;">Chi bộ Văn phòng</div>
+          <div style="font-size:10px;color:var(--gray3);margin-top:2px;">Dự kiến: Quý III hoặc IV.2026</div>
+        </div>
+        <div style="background:var(--gray5);border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;color:var(--gray2);">
+          <div style="font-weight:600;">Chi bộ Phòng TCCB</div>
+          <div style="font-size:10px;color:var(--gray3);margin-top:2px;">Dự kiến: Quý III hoặc IV.2026</div>
+        </div>
+        <div style="background:var(--gray5);border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;color:var(--gray2);">
+          <div style="font-weight:600;">Chi bộ Phòng NV</div>
+          <div style="font-size:10px;color:var(--gray3);margin-top:2px;">Dự kiến: Quý III hoặc IV.2026</div>
+        </div>
+        <div style="background:var(--gray5);border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;color:var(--gray2);">
+          <div style="font-weight:600;">Chi bộ Phòng CNTT</div>
+          <div style="font-size:10px;color:var(--gray3);margin-top:2px;">Dự kiến: Quý III hoặc IV.2026</div>
+        </div>
+      </div>
+      <div style="padding:0 16px 14px;font-size:11px;color:var(--gray3);">
+        ⚠️ Lưu ý: Cần bổ sung kế hoạch cụ thể cho 4 Chi bộ trên vào Quý III-IV.2026 để đảm bảo 100% Chi bộ được KTGS trong năm.
+      </div>
+    </div>
+
+    <div class="page-footer">
+      Hệ thống Quản lý KTGS & Kỷ luật Đảng · UBKT Đảng ủy Chi cục Hải quan Khu vực VIII · v1.0.0
+    </div>
+  </main>
+</div>
+
+<script>
+// ── DỮ LIỆU 13 CHI BỘ (từ file Danh sách đoàn KTGS 2026.xlsx)
+// Cột: [BCH_CT50, BTV_QD37, BTV_QD179, UBKT_KTGS, UBKT_TCĐ, UBKT_NQ57]
+// Giá trị: null = không có, 'done' = hoàn thành, 'progress' = đang TH, 'overdue' = quá hạn, 'todo' = chưa TH
+const DATA = [
+  { stt:1,  name:'Chi bộ HQCK QT Móng Cái',     code:'CB HQCK QT Móng Cái',   cols:['done',null,null,null,null,'overdue'] },
+  { stt:2,  name:'Chi bộ HQCK cảng Hòn Gai',     code:'CB HQCK cảng Hòn Gai',  cols:[null,null,'progress',null,'progress',null] },
+  { stt:3,  name:'Chi bộ HQCK cảng Vạn Gia',     code:'CB HQCK cảng Vạn Gia',  cols:['done',null,null,null,null,null] },
+  { stt:4,  name:'Chi bộ HQCK cảng Cẩm Phả',     code:'CB HQCK cảng Cẩm Phả',  cols:[null,null,null,'done',null,null] },
+  { stt:5,  name:'Chi bộ HQCK Hoành Mô',          code:'CB HQCK Hoành Mô',       cols:[null,'done',null,null,null,'overdue'] },
+  { stt:6,  name:'Chi bộ HQCK Bắc Phong Sinh',    code:'CB HQCK Bắc Phong Sinh', cols:[null,null,null,'done',null,null] },
+  { stt:7,  name:'Chi bộ Đội KSHQ',               code:'CB Đội KSHQ',            cols:[null,null,'progress',null,null,null] },
+  { stt:8,  name:'Chi bộ Đội PT&KTSTQ',           code:'CB Đội PT&KTSTQ',        cols:[null,'done',null,null,null,null] },
+  { stt:9,  name:'Chi bộ Phòng QLRR',             code:'CB Phòng QLRR',          cols:[null,null,null,null,'progress',null] },
+  { stt:10, name:'Chi bộ Văn phòng',              code:'CB Văn phòng',           cols:[null,null,null,null,null,null] },
+  { stt:11, name:'Chi bộ Phòng TCCB',             code:'CB Phòng TCCB',          cols:[null,null,null,null,null,null] },
+  { stt:12, name:'Chi bộ Phòng NV',               code:'CB Phòng NV',            cols:[null,null,null,null,null,null] },
+  { stt:13, name:'Chi bộ Phòng CNTT',             code:'CB Phòng CNTT',          cols:[null,null,null,null,null,null] },
+];
+
+const STATUS_MAP = {
+  done:     { icon:'✓', cls:'dot-done',     label:'Hoàn thành' },
+  progress: { icon:'→', cls:'dot-progress', label:'Đang TH' },
+  overdue:  { icon:'!', cls:'dot-overdue',  label:'Quá hạn' },
+  todo:     { icon:'○', cls:'dot-todo',     label:'Chưa TH' },
+};
+
+function countStatus(cols) {
+  const counts = { done:0, progress:0, overdue:0, todo:0, total:0 };
+  cols.forEach(c => { if(c) { counts[c]++; counts.total++; } });
+  return counts;
+}
+
+function statusBadge(counts) {
+  if(counts.total === 0) return '<span class="badge badge-gray">Không có cuộc</span>';
+  if(counts.overdue > 0) return '<span class="badge badge-red">Có quá hạn</span>';
+  if(counts.progress > 0) return '<span class="badge badge-gold">Đang thực hiện</span>';
+  if(counts.done === counts.total) return '<span class="badge badge-green">Hoàn thành</span>';
+  return '<span class="badge badge-gray">Chưa thực hiện</span>';
+}
+
+function progColor(counts) {
+  if(counts.overdue > 0) return 'r';
+  if(counts.progress > 0) return 'y';
+  if(counts.done > 0) return 'g';
+  return 'y';
+}
+
+function renderTable(filter) {
+  const tbody = document.getElementById('tableBody');
+  let html = '';
+  DATA.forEach(row => {
+    const cols = row.cols;
+    const cnt = countStatus(cols);
+    const pct = cnt.total > 0 ? Math.round((cnt.done / cnt.total) * 100) : 0;
+    const pc = progColor(cnt);
+
+    let cells = '';
+    cols.forEach(c => {
+      if(c === null) {
+        cells += `<td class="cell-kt"><span style="color:var(--gray4);">–</span></td>`;
+      } else {
+        const s = STATUS_MAP[c];
+        cells += `<td class="cell-kt"><div class="dot-kt ${s.cls}" title="${s.label}">${s.icon}</div></td>`;
+      }
+    });
+
+    const totalCls = cnt.total >= 2 ? 't2' : cnt.total === 1 ? 't1' : 't0';
+
+    html += `<tr>
+      <td style="text-align:center;color:var(--gray3);font-weight:600;">${row.stt}</td>
+      <td><div class="chi-bo-name">${row.name}</div></td>
+      ${cells}
+      <td class="total-cell ${totalCls}">${cnt.total > 0 ? cnt.total : '–'}</td>
+      <td>
+        ${cnt.total > 0 ? `
+        <div class="prog-wrap">
+          <div class="prog-bar"><div class="prog-fill ${pc}" style="width:${pct}%"></div></div>
+          <div class="prog-pct">${pct}% (${cnt.done}/${cnt.total} cuộc)</div>
+        </div>` : '<span style="font-size:11px;color:var(--gray4);">Chưa có kế hoạch</span>'}
+      </td>
+      <td>${statusBadge(cnt)}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+}
+
+function filterType(type, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTable(type);
+}
+
+function filterQuarter(val) { renderTable('all'); }
+
+// Init
+renderTable('all');
+</script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/integration.js"></script>
+</body>
+</html>

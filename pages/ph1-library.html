@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thư viện nghiệp vụ KTGS | HQKV8</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --red:#CC0000;--red-dark:#990000;--red-light:#ffecec;
+      --gold:#D4A017;--gold-lt:#FFF8E1;
+      --navy:#003087;--navy-lt:#E8F0FE;
+      --green:#1A7A4A;--green-lt:#E8F5EE;
+      --teal:#006064;--teal-lt:#E0F7FA;
+      --orange:#D46B00;--orange-lt:#FFF3E0;
+      --purple:#5B2C8D;--purple-lt:#F3E8FF;
+      --gray1:#1C1C2E;--gray2:#3D3D5C;--gray3:#7B7B9B;
+      --gray4:#C8C8DC;--gray5:#F0F0F8;--white:#fff;
+      --sidebar-w:240px;--cat-w:210px;--header-h:64px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,.08);
+      --shadow-md:0 4px 16px rgba(0,0,0,.12);
+      --radius:10px;--radius-sm:6px;
+    }
+    html,body{height:100%;font-family:'Be Vietnam Pro',sans-serif;background:var(--gray5);color:var(--gray1);font-size:14px;}
+    ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:var(--gray4);border-radius:3px;}
+
+    /* HEADER */
+    .header{position:fixed;top:0;left:0;right:0;height:var(--header-h);
+      background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 50%,#A00000 100%);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 20px;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.25);}
+    .header-left{display:flex;align-items:center;gap:14px;}
+    .logo-hq{width:50px;height:50px;border-radius:50%;background:#CC0000;overflow:hidden;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));flex-shrink:0;}
+    .logo-hq img{width:50px;height:50px;object-fit:cover;border-radius:50%;display:block;}
+    .header-divider{width:1px;height:36px;background:rgba(255,255,255,.25);margin:0 6px;}
+    .header-title .main{font-size:14px;font-weight:700;color:#fff;}
+    .header-title .sub{font-size:11px;color:rgba(255,255,255,.85);margin-top:1px;}
+    .header-right{display:flex;align-items:center;gap:10px;}
+    .user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:24px;padding:5px 12px 5px 5px;border:1px solid rgba(255,255,255,.2);}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--red-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
+    .user-info .name{font-size:12px;font-weight:600;color:#fff;}
+    .user-info .role{font-size:10px;color:rgba(255,255,255,.8);}
+    .header-back{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.3);transition:all .2s;}
+    .header-back:hover{background:rgba(255,255,255,.2);}
+
+    /* LAYOUT */
+    .layout{display:flex;padding-top:var(--header-h);min-height:100vh;}
+
+    /* LEFT NAV SIDEBAR */
+    .sidebar{position:fixed;left:0;top:var(--header-h);bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray4);overflow-y:auto;z-index:900;display:flex;flex-direction:column;}
+    .sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--gray3);text-transform:uppercase;padding:16px 16px 6px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--gray2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;position:relative;}
+    .nav-item:hover{background:var(--gray5);color:var(--red);}
+    .nav-item.active{background:var(--red-light);color:var(--red);font-weight:600;}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);border-radius:0 2px 2px 0;}
+    .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;}
+    .nav-badge.green{background:var(--green);}
+    .nav-badge.orange{background:var(--orange);}
+    .sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--gray4);font-size:11px;color:var(--gray3);line-height:1.6;}
+
+    /* CATEGORY PANEL */
+    .cat-panel{position:fixed;left:var(--sidebar-w);top:var(--header-h);bottom:0;width:var(--cat-w);background:var(--white);border-right:1px solid var(--gray4);overflow-y:auto;z-index:800;}
+    .cat-header{padding:14px 14px 10px;border-bottom:1px solid var(--gray5);}
+    .cat-title{font-size:12px;font-weight:700;color:var(--gray1);}
+    .cat-subtitle{font-size:10px;color:var(--gray3);margin-top:2px;}
+    .cat-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;}
+    .cat-item:hover{background:var(--gray5);}
+    .cat-item.active{background:var(--navy-lt);border-left-color:var(--navy);}
+    .cat-item.active .cat-name{color:var(--navy);font-weight:600;}
+    .cat-icon{font-size:18px;flex-shrink:0;}
+    .cat-name{font-size:12px;color:var(--gray2);line-height:1.3;}
+    .cat-count{margin-left:auto;background:var(--gray5);color:var(--gray3);font-size:10px;font-weight:700;border-radius:8px;padding:1px 6px;flex-shrink:0;}
+    .cat-item.active .cat-count{background:var(--navy-lt);color:var(--navy);}
+
+    /* MAIN */
+    .main{margin-left:calc(var(--sidebar-w) + var(--cat-w));flex:1;padding:20px;min-height:calc(100vh - var(--header-h));}
+
+    /* SEARCH BAR */
+    .search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+    .search-input-wrap{position:relative;flex:1;min-width:260px;}
+    .search-input-wrap input{width:100%;padding:9px 14px 9px 36px;border:1px solid var(--gray4);border-radius:var(--radius-sm);font-size:13px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray1);background:white;transition:border .2s;}
+    .search-input-wrap input:focus{outline:none;border-color:var(--red);}
+    .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--gray3);}
+    .filter-select{padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--gray4);font-size:12px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray2);background:white;cursor:pointer;}
+    .filter-select:focus{outline:none;border-color:var(--red);}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+    .btn-primary{background:var(--red);color:white;}
+    .btn-primary:hover{background:var(--red-dark);}
+    .btn-outline{background:white;color:var(--gray2);border:1px solid var(--gray4);}
+    .btn-outline:hover{border-color:var(--red);color:var(--red);}
+
+    /* RESULT BAR */
+    .result-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .result-count{font-size:12px;color:var(--gray3);}
+    .result-count strong{color:var(--gray1);}
+    .view-toggle{display:flex;gap:4px;}
+    .view-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--gray4);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gray3);transition:all .15s;}
+    .view-btn.active{background:var(--red);color:white;border-color:var(--red);}
+
+    /* DOC CARDS – LIST VIEW */
+    .doc-list{display:flex;flex-direction:column;gap:8px;}
+    .doc-card{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:all .2s;border-left:3px solid transparent;}
+    .doc-card:hover{box-shadow:var(--shadow-md);transform:translateX(2px);}
+    .doc-card.important{border-left-color:var(--gold);}
+    .doc-icon{font-size:28px;flex-shrink:0;width:40px;text-align:center;}
+    .doc-body{flex:1;min-width:0;}
+    .doc-title{font-size:13px;font-weight:600;color:var(--gray1);line-height:1.4;margin-bottom:4px;}
+    .doc-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--gray3);}
+    .doc-meta span{display:flex;align-items:center;gap:3px;}
+    .doc-keywords{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+    .kw-tag{background:var(--gray5);color:var(--gray2);border-radius:4px;padding:1px 7px;font-size:10px;}
+    .doc-actions{display:flex;gap:6px;flex-shrink:0;align-items:flex-start;}
+    .action-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--gray4);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gray3);transition:all .15s;}
+    .action-btn:hover{border-color:var(--red);color:var(--red);}
+    .action-btn.starred{color:var(--gold);border-color:var(--gold);}
+
+    /* BADGE */
+    .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+    .badge-red{background:var(--red-light);color:var(--red);}
+    .badge-navy{background:var(--navy-lt);color:var(--navy);}
+    .badge-green{background:var(--green-lt);color:var(--green);}
+    .badge-gold{background:var(--gold-lt);color:#8B6800;}
+    .badge-teal{background:var(--teal-lt);color:var(--teal);}
+    .badge-purple{background:var(--purple-lt);color:var(--purple);}
+    .badge-gray{background:var(--gray5);color:var(--gray3);}
+    .badge-orange{background:var(--orange-lt);color:var(--orange);}
+
+    /* DOC GRID VIEW */
+    .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+    .doc-grid-card{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--gray4);}
+    .doc-grid-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+    .doc-grid-card.important{border-top-color:var(--gold);}
+    .doc-grid-icon{font-size:32px;text-align:center;}
+    .doc-grid-title{font-size:12px;font-weight:600;color:var(--gray1);line-height:1.4;text-align:center;}
+    .doc-grid-meta{font-size:10px;color:var(--gray3);text-align:center;}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:white;border-radius:var(--radius);width:100%;max-width:680px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+    .modal-header{display:flex;align-items:flex-start;gap:12px;padding:20px;border-bottom:1px solid var(--gray5);}
+    .modal-icon{font-size:36px;flex-shrink:0;}
+    .modal-title{font-size:15px;font-weight:700;color:var(--gray1);line-height:1.4;}
+    .modal-sub{font-size:12px;color:var(--gray3);margin-top:4px;}
+    .modal-close{margin-left:auto;cursor:pointer;color:var(--gray3);font-size:20px;flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s;}
+    .modal-close:hover{background:var(--gray5);color:var(--gray1);}
+    .modal-body{padding:20px;overflow-y:auto;flex:1;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .info-item label{font-size:10px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px;}
+    .info-item .value{font-size:13px;color:var(--gray1);}
+    .info-item.full{grid-column:1/-1;}
+    .modal-footer{padding:14px 20px;border-top:1px solid var(--gray5);display:flex;gap:8px;justify-content:flex-end;}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--gray3);}
+    .empty-state .es-icon{font-size:48px;margin-bottom:12px;}
+    .empty-state .es-title{font-size:15px;font-weight:600;color:var(--gray2);margin-bottom:6px;}
+
+    /* PROCESS SECTION */
+    .process-steps{display:flex;flex-direction:column;gap:0;}
+    .step-item{display:flex;gap:14px;position:relative;}
+    .step-item:not(:last-child)::after{content:'';position:absolute;left:17px;top:38px;bottom:-8px;width:2px;background:var(--gray4);}
+    .step-num{width:34px;height:34px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;z-index:1;}
+    .step-body{flex:1;padding-bottom:16px;}
+    .step-title{font-size:13px;font-weight:600;color:var(--gray1);margin-bottom:3px;}
+    .step-desc{font-size:12px;color:var(--gray3);line-height:1.5;}
+    .step-docs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+    .step-doc-tag{background:var(--navy-lt);color:var(--navy);border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600;cursor:pointer;}
+    .step-doc-tag:hover{background:var(--navy);color:white;}
+
+    .page-footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--gray4);text-align:center;font-size:11px;color:var(--gray3);line-height:1.8;}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-hq" title="Hải quan Việt Nam">
+      <img src="../logo-haiquan.png" alt="Hải quan Việt Nam"
+           onerror="this.style.display='none'"/>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-title">
+      <div class="main">📚 THƯ VIỆN NGHIỆP VỤ KIỂM TRA, GIÁM SÁT VÀ KỶ LUẬT ĐẢNG</div>
+      <div class="sub">Kho văn bản điện tử – UBKT Đảng ủy Chi cục Hải quan Khu vực VIII</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a class="header-back" href="../index.html">← Dashboard</a>
+    <div class="user-badge">
+      <div class="user-avatar">K8</div>
+      <div class="user-info">
+        <div class="name">UBKT Đảng ủy KV8</div>
+        <div class="role">Thường trực UBKT</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="sidebar">
+    <div class="sidebar-section-label">Tổng quan</div>
+    <a class="nav-item" href="../index.html"><span class="nav-icon">🏠</span> Dashboard</a>
+    <div class="sidebar-section-label">Nghiệp vụ</div>
+    <a class="nav-item active" href="ph1-library.html"><span class="nav-icon">📚</span> Thư viện nghiệp vụ</a>
+    <a class="nav-item" href="ph2-programs.html"><span class="nav-icon">📋</span> Chương trình KTGS</a>
+    <a class="nav-item" href="ph3-cases.html"><span class="nav-icon">📁</span> Hồ sơ cuộc KTGS<span class="nav-badge">6</span></a>
+    <a class="nav-item" href="ph4-conclusions.html"><span class="nav-icon">✅</span> Theo dõi kết luận<span class="nav-badge orange">5</span></a>
+    <a class="nav-item" href="ph5-reports.html"><span class="nav-icon">📊</span> Báo cáo & Thống kê</a>
+    <a class="nav-item" href="theo-doi-chibo.html"><span class="nav-icon">🗂️</span> Tiến độ KTGS Chi bộ<span class="nav-badge green">13</span></a>
+    <div class="sidebar-section-label">Hệ thống</div>
+    <a class="nav-item" href="#"><span class="nav-icon">👥</span> Quản lý người dùng</a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Cài đặt</a>
+    <div class="sidebar-footer">
+      <div>Phiên bản 1.0.0 · Nhiệm kỳ 2025–2030</div>
+    </div>
+  </nav>
+
+  <!-- CATEGORY PANEL -->
+  <aside class="cat-panel">
+    <div class="cat-header">
+      <div class="cat-title">📂 Nhóm tài liệu</div>
+      <div class="cat-subtitle">10 nhóm · <span id="totalDocs">0</span> văn bản</div>
+    </div>
+    <div id="catList"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Search -->
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên, số văn bản, từ khóa..." oninput="doSearch()"/>
+      </div>
+      <select class="filter-select" id="filterType" onchange="doSearch()">
+        <option value="">Tất cả loại VB</option>
+        <option value="Quy định">Quy định</option>
+        <option value="Hướng dẫn">Hướng dẫn</option>
+        <option value="Nghị quyết">Nghị quyết</option>
+        <option value="Quyết định">Quyết định</option>
+        <option value="Kế hoạch">Kế hoạch</option>
+        <option value="Chương trình">Chương trình</option>
+        <option value="Mẫu biểu">Mẫu biểu</option>
+        <option value="Quy trình">Quy trình</option>
+      </select>
+      <select class="filter-select" id="filterField" onchange="doSearch()">
+        <option value="">Tất cả lĩnh vực</option>
+        <option value="Kiểm tra">Kiểm tra</option>
+        <option value="Giám sát">Giám sát</option>
+        <option value="Kỷ luật">Kỷ luật</option>
+        <option value="Tổng hợp">Tổng hợp</option>
+      </select>
+      <button class="btn btn-outline" onclick="clearFilters()">✕ Xóa lọc</button>
+      <button class="btn btn-primary" onclick="showAddModal()">+ Thêm tài liệu</button>
+    </div>
+
+    <!-- Result bar -->
+    <div class="result-bar">
+      <div class="result-count" id="resultCount">Đang tải...</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="font-size:11px;color:var(--gray3);">
+          <input type="checkbox" id="showImportant" onchange="doSearch()" style="margin-right:4px;"/> Chỉ tài liệu quan trọng ⭐
+        </label>
+        <div class="view-toggle">
+          <button class="view-btn active" onclick="setView('list',this)" title="Danh sách">☰</button>
+          <button class="view-btn" onclick="setView('grid',this)" title="Lưới">⊞</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Văn bản / Quy trình -->
+    <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--gray4);">
+      <button id="tabDocs" onclick="switchTab('docs')" style="padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--red);border-bottom:2px solid var(--red);margin-bottom:-2px;">📄 Văn bản nghiệp vụ</button>
+      <button id="tabProcess" onclick="switchTab('process')" style="padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--gray3);">🔄 Quy trình nghiệp vụ</button>
+    </div>
+
+    <!-- Docs panel -->
+    <div id="panelDocs">
+      <div id="docContainer"></div>
+    </div>
+
+    <!-- Process panel -->
+    <div id="panelProcess" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <!-- Quy trình kiểm tra -->
+        <div style="background:white;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--navy);">
+            <span style="font-size:20px;">🔍</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--navy);">Quy trình Kiểm tra</div>
+              <div style="font-size:11px;color:var(--gray3);">10 bước thực hiện theo HD 03-HD/UBKTTW</div>
+            </div>
+          </div>
+          <div class="process-steps">
+            <div class="step-item"><div class="step-num">1</div><div class="step-body"><div class="step-title">Chuẩn bị</div><div class="step-desc">Nghiên cứu thông tin đối tượng, dự thảo kế hoạch, xây dựng đề cương</div><div class="step-docs"><span class="step-doc-tag">Mẫu KH kiểm tra</span><span class="step-doc-tag">Đề cương</span></div></div></div>
+            <div class="step-item"><div class="step-num">2</div><div class="step-body"><div class="step-title">Ban hành Quyết định thành lập Đoàn</div><div class="step-desc">Dự thảo, trình ký và ban hành QĐ thành lập Đoàn kiểm tra</div><div class="step-docs"><span class="step-doc-tag">Mẫu QĐ thành lập</span></div></div></div>
+            <div class="step-item"><div class="step-num">3</div><div class="step-body"><div class="step-title">Thông báo cho đối tượng kiểm tra</div><div class="step-desc">Gửi thông báo, yêu cầu chuẩn bị báo cáo, hồ sơ tự kiểm tra</div><div class="step-docs"><span class="step-doc-tag">Mẫu TB kiểm tra</span></div></div></div>
+            <div class="step-item"><div class="step-num">4</div><div class="step-body"><div class="step-title">Thu thập, nghiên cứu hồ sơ</div><div class="step-desc">Tiếp nhận báo cáo, hồ sơ từ đối tượng. Đối chiếu, xác minh thông tin</div><div class="step-docs"><span class="step-doc-tag">Biên bản tiếp nhận</span><span class="step-doc-tag">Phiếu xác minh</span></div></div></div>
+            <div class="step-item"><div class="step-num">5</div><div class="step-body"><div class="step-title">Làm việc trực tiếp với đối tượng</div><div class="step-desc">Họp, nghe báo cáo, kiểm tra thực tế, lấy ý kiến giải trình</div><div class="step-docs"><span class="step-doc-tag">Biên bản làm việc</span></div></div></div>
+            <div class="step-item"><div class="step-num">6</div><div class="step-body"><div class="step-title">Xây dựng dự thảo báo cáo kết quả</div><div class="step-desc">Đoàn họp, thống nhất nhận xét, đánh giá, đề xuất kết luận</div><div class="step-docs"><span class="step-doc-tag">Mẫu BC kết quả</span></div></div></div>
+            <div class="step-item"><div class="step-num">7</div><div class="step-body"><div class="step-title">Thông qua dự thảo kết luận</div><div class="step-desc">Họp thông qua dự thảo, lấy ý kiến đối tượng về nội dung kết luận</div><div class="step-docs"><span class="step-doc-tag">Mẫu KL kiểm tra</span></div></div></div>
+            <div class="step-item"><div class="step-num">8</div><div class="step-body"><div class="step-title">Ban hành Kết luận kiểm tra</div><div class="step-desc">Hoàn thiện, ký ban hành và gửi kết luận kiểm tra chính thức</div><div class="step-docs"><span class="step-doc-tag">Mẫu kết luận</span></div></div></div>
+            <div class="step-item"><div class="step-num">9</div><div class="step-body"><div class="step-title">Theo dõi thực hiện kết luận</div><div class="step-desc">Tổ chức đôn đốc, đánh giá mức độ thực hiện các nội dung kết luận</div><div class="step-docs"><span class="step-doc-tag">Phiếu theo dõi</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:var(--green);">10</div><div class="step-body"><div class="step-title">Lưu trữ hồ sơ</div><div class="step-desc">Hoàn thiện hồ sơ điện tử và giấy, lưu trữ theo quy định</div><div class="step-docs"><span class="step-doc-tag">Danh mục hồ sơ</span></div></div></div>
+          </div>
+        </div>
+        <!-- Quy trình giám sát -->
+        <div style="background:white;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #0097A7;">
+            <span style="font-size:20px;">👁</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#0097A7;">Quy trình Giám sát</div>
+              <div style="font-size:11px;color:var(--gray3);">10 bước thực hiện theo HD 03-HD/UBKTTW</div>
+            </div>
+          </div>
+          <div class="process-steps">
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">1</div><div class="step-body"><div class="step-title">Chuẩn bị giám sát</div><div class="step-desc">Xác định nội dung, đối tượng, phương pháp và kế hoạch giám sát</div><div class="step-docs"><span class="step-doc-tag" style="background:#E0F7FA;color:#006064;">Mẫu KH giám sát</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">2</div><div class="step-body"><div class="step-title">Thành lập Tổ giám sát</div><div class="step-desc">Phân công nhiệm vụ cụ thể cho từng thành viên Tổ giám sát</div><div class="step-docs"><span class="step-doc-tag" style="background:#E0F7FA;color:#006064;">QĐ thành lập</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">3</div><div class="step-body"><div class="step-title">Thông báo giám sát</div><div class="step-desc">Gửi thông báo nội dung, thời gian giám sát tới đối tượng</div><div class="step-docs"><span class="step-doc-tag" style="background:#E0F7FA;color:#006064;">Mẫu TB giám sát</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">4</div><div class="step-body"><div class="step-title">Thu thập thông tin</div><div class="step-desc">Thu thập báo cáo, hồ sơ, tài liệu liên quan đến nội dung giám sát</div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">5</div><div class="step-body"><div class="step-title">Tổ chức giám sát trực tiếp</div><div class="step-desc">Làm việc, đối chiếu thực tế; ghi nhận kết quả thực hiện của đối tượng</div><div class="step-docs"><span class="step-doc-tag" style="background:#E0F7FA;color:#006064;">Biên bản GS</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">6</div><div class="step-body"><div class="step-title">Dự thảo báo cáo kết quả giám sát</div><div class="step-desc">Tổ họp, thống nhất nhận xét, chỉ ra ưu điểm và tồn tại, hạn chế</div><div class="step-docs"><span class="step-doc-tag" style="background:#E0F7FA;color:#006064;">Mẫu BC GS</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">7</div><div class="step-body"><div class="step-title">Thông báo kết quả giám sát</div><div class="step-desc">Ban hành Thông báo kết quả giám sát gửi đối tượng và lưu hồ sơ</div><div class="step-docs"><span class="step-doc-tag" style="background:#E0F7FA;color:#006064;">Mẫu TB kết quả</span></div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">8</div><div class="step-body"><div class="step-title">Chuyển kiểm tra (nếu có vi phạm)</div><div class="step-desc">Nếu phát hiện vi phạm, chuyển sang quy trình kiểm tra theo thẩm quyền</div></div></div>
+            <div class="step-item"><div class="step-num" style="background:#0097A7;">9</div><div class="step-body"><div class="step-title">Theo dõi khắc phục tồn tại</div><div class="step-desc">Đôn đốc đối tượng khắc phục tồn tại, hạn chế được chỉ ra</div></div></div>
+            <div class="step-item"><div class="step-num" style="background:var(--green);">10</div><div class="step-body"><div class="step-title">Lưu trữ hồ sơ giám sát</div><div class="step-desc">Hoàn thiện và lưu trữ toàn bộ hồ sơ giám sát theo quy định</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      Hệ thống Quản lý KTGS & Kỷ luật Đảng · UBKT Đảng ủy Chi cục HQKV VIII · v1.0.0
+    </div>
+  </main>
+</div>
+
+<!-- MODAL CHI TIẾT -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-icon" id="mIcon"></div>
+      <div>
+        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-sub" id="mSub"></div>
+      </div>
+      <span class="modal-close" onclick="closeModalDirect()">✕</span>
+    </div>
+    <div class="modal-body">
+      <div class="info-grid" id="mGrid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModalDirect()">Đóng</button>
+      <button class="btn btn-outline" id="mBtnStar" onclick="toggleStar()">⭐ Đánh dấu quan trọng</button>
+      <a class="btn btn-primary" id="mBtnOpen" href="#" target="_blank">📂 Mở tài liệu</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ DỮ LIỆU TÀI LIỆU ══
+// (dữ liệu mẫu phản ánh tài liệu thực trong thư mục VB KTGS/)
+const CATEGORIES = [
+  { id:'all',   icon:'📂', name:'Tất cả văn bản',               count:0 },
+  { id:'tw',    icon:'🏛️', name:'Văn bản Trung ương',            count:0 },
+  { id:'ubkttw',icon:'⚖️', name:'Văn bản UBKT Trung ương',       count:0 },
+  { id:'bttw',  icon:'🗂️', name:'Văn bản Ban Tổ chức TW',        count:0 },
+  { id:'tu',    icon:'🌿', name:'Văn bản Tỉnh ủy Quảng Ninh',    count:0 },
+  { id:'ubkttu',icon:'📋', name:'Văn bản UBKT Tỉnh ủy',          count:0 },
+  { id:'duub',  icon:'🏢', name:'Văn bản Đảng ủy UBND tỉnh',     count:0 },
+  { id:'dukv8', icon:'🔵', name:'Văn bản Đảng ủy Chi cục HQKV8', count:0 },
+  { id:'qtrinh',icon:'🔄', name:'Quy trình nghiệp vụ',            count:0 },
+  { id:'mauBieu',icon:'📝',name:'Mẫu biểu nghiệp vụ',            count:0 },
+  { id:'thamkhao',icon:'📖',name:'Tài liệu tham khảo',           count:0 },
+];
+
+const DOCS = [
+  // TRUNG ƯƠNG
+  { id:1, group:'tw', icon:'📜', type:'Nghị quyết', number:'NQ 05-NQ/TW', date:'2026', issuer:'Ban Chấp hành TW', title:'Về tăng cường công tác kiểm tra, giám sát của Đảng', field:'Kiểm tra', keywords:['kiểm tra','giám sát','Đảng'], important:true, file:'../VB KTGS/TW-NQ 05.26.TW ktgs.docx' },
+  { id:2, group:'tw', icon:'📜', type:'Quy định', number:'QĐ 21-QĐ/TW', date:'2026', issuer:'Ban Chấp hành TW', title:'Về công tác kiểm tra, giám sát và kỷ luật của Đảng', field:'Tổng hợp', keywords:['quy định','kỷ luật','kiểm tra'], important:true, file:'../VB KTGS/TW-QD 21.26.TW KTGS.docx' },
+  { id:3, group:'tw', icon:'📜', type:'Quy định', number:'QĐ 37-QĐ/TW', date:'25/10/2021', issuer:'BCH TW', title:'Về những điều đảng viên không được làm', field:'Kỷ luật', keywords:['đảng viên','kỷ luật','quy định'], important:true, file:'#' },
+  { id:4, group:'tw', icon:'📜', type:'Quy định', number:'QĐ 144-QĐ/TW', date:'09/5/2024', issuer:'Bộ Chính trị', title:'Về chuẩn mực đạo đức cách mạng của cán bộ, đảng viên', field:'Kỷ luật', keywords:['đạo đức','cán bộ','đảng viên'], important:false, file:'#' },
+  { id:5, group:'tw', icon:'📜', type:'Quy định', number:'QĐ 114-QĐ/TW', date:'11/7/2023', issuer:'Bộ Chính trị', title:'Về kiểm soát quyền lực và phòng chống tham nhũng, tiêu cực trong công tác cán bộ', field:'Kiểm tra', keywords:['kiểm soát quyền lực','tham nhũng','cán bộ'], important:true, file:'#' },
+  { id:6, group:'tw', icon:'📜', type:'Nghị quyết', number:'NQ 57-NQ/TW', date:'22/12/2024', issuer:'Bộ Chính trị', title:'Về đột phá phát triển khoa học, công nghệ và chuyển đổi số quốc gia', field:'Giám sát', keywords:['chuyển đổi số','khoa học','công nghệ'], important:false, file:'#' },
+  { id:7, group:'tw', icon:'📜', type:'Chỉ thị', number:'CT 50-CT/TW', date:'23/7/2025', issuer:'Ban Bí thư', title:'Về tiếp tục đổi mới và nâng cao chất lượng sinh hoạt chi bộ trong giai đoạn mới', field:'Kiểm tra', keywords:['sinh hoạt chi bộ','đổi mới','chất lượng'], important:true, file:'#' },
+  // UBKT TRUNG ƯƠNG
+  { id:8, group:'ubkttw', icon:'⚖️', type:'Hướng dẫn', number:'HD 03-HD/UBKTTW', date:'2023', issuer:'UBKT Trung ương', title:'Quy trình kiểm tra, giám sát chi bộ', field:'Tổng hợp', keywords:['quy trình','chi bộ','hướng dẫn'], important:true, file:'../Bieu mau HD 03.2023.UBKTTU quy trinh KT,GS chi bo - 13 (Phat hanh)/' },
+  { id:9, group:'ubkttw', icon:'⚖️', type:'Quyết định', number:'QĐ 2051-QĐ/UBKTTW', date:'2025', issuer:'UBKT Trung ương', title:'Mẫu văn bản KTGS của UBKT các cấp', field:'Tổng hợp', keywords:['mẫu văn bản','UBKT','kiểm tra'], important:true, file:'../VB KTGS/TW-QD 2051.25.UBKTTW mẫu KTGS của ubkt các cấp.pdf' },
+  { id:10,group:'ubkttw', icon:'⚖️', type:'Kế hoạch', number:'KH 52-KH/ĐUU', date:'2025', issuer:'Đảng ủy UBND tỉnh', title:'Triển khai KH 237 UBKTTW về KTGS', field:'Kiểm tra', keywords:['kế hoạch','triển khai','KTGS'], important:false, file:'../VB KTGS/TW-KH 52.25.DUUB trk KH 237 UBKTTW về KTGS.pdf' },
+  // TỈNH ỦY QUẢNG NINH
+  { id:11,group:'tu', icon:'🌿', type:'Chương trình', number:'Ctr 06-CTr/TU', date:'2025', issuer:'Tỉnh ủy Quảng Ninh', title:'Chương trình KTGS toàn khóa XVI Tỉnh ủy Quảng Ninh', field:'Tổng hợp', keywords:['toàn khóa','Tỉnh ủy','chương trình'], important:true, file:'../VB KTGS/TU-Ctr 06.25.TU KTGS toàn khóa XVI.pdf' },
+  { id:12,group:'tu', icon:'🌿', type:'Chương trình', number:'Ctr 08-CTr/TU', date:'2025', issuer:'Tỉnh ủy Quảng Ninh', title:'Chương trình KTGS năm 2026 của Tỉnh ủy', field:'Tổng hợp', keywords:['năm 2026','chương trình','Tỉnh ủy'], important:true, file:'../VB KTGS/TU-Ctr 08.25.TU KTGS năm 2026.pdf' },
+  { id:13,group:'tu', icon:'🌿', type:'Chương trình', number:'Ctr 17-CTr/TU', date:'2026', issuer:'Tỉnh ủy Quảng Ninh', title:'Triển khai NQ 05/TW về kiểm tra giám sát', field:'Kiểm tra', keywords:['NQ05','triển khai','kiểm tra'], important:false, file:'../VB KTGS/TU-Ctr 17.26.TU trk NQ 05 TW KTGS.pdf' },
+  // UBKT TỈNH ỦY
+  { id:14,group:'ubkttu', icon:'📋', type:'Quy chế', number:'QC 04-QC/TU', date:'2026', issuer:'Tỉnh ủy Quảng Ninh', title:'Theo dõi, đôn đốc kiểm tra thực hiện nhiệm vụ trên hệ thống', field:'Tổng hợp', keywords:['theo dõi','đôn đốc','hệ thống'], important:false, file:'../VB KTGS/TU-QC 04.26.TU theo doi đôn đốc KT thực hiện NV trên HT.pdf' },
+  // ĐẢNG ỦY UBND TỈNH
+  { id:15,group:'duub', icon:'🏢', type:'Kế hoạch', number:'KH 01-KH/BTCDUUB', date:'2026', issuer:'Đảng ủy UBND tỉnh', title:'Kế hoạch KTGS năm 2026 của Đảng ủy UBND tỉnh', field:'Tổng hợp', keywords:['kế hoạch','Đảng ủy UBND','năm 2026'], important:false, file:'../VB KTGS/UB-KH 01.26.BTCDUUB KTGS.pdf' },
+  { id:16,group:'duub', icon:'🏢', type:'Chương trình', number:'Ctr 01-CTr/UBKT', date:'2025', issuer:'UBKT Đảng ủy UBND tỉnh', title:'Chương trình KTGS toàn khóa 2025–2030 của UBKT DUUB', field:'Tổng hợp', keywords:['toàn khóa','UBKT','chương trình'], important:true, file:'../VB KTGS/UB-Ctr 01.25 UBKT toàn khóa 25-30.pdf' },
+  // ĐẢNG ỦY CHI CỤC HQKV8
+  { id:17,group:'dukv8', icon:'🔵', type:'Chương trình', number:'Ctr KTGS toàn khóa', date:'2025', issuer:'Đảng ủy HQKV8', title:'Chương trình KTGS toàn khóa Chi cục HQKV8 (bổ sung)', field:'Tổng hợp', keywords:['toàn khóa','HQKV8','chương trình'], important:true, file:'../VB KTGS/KV8-Ctr KTGS toàn khóa bs (08).pdf' },
+  { id:18,group:'dukv8', icon:'🔵', type:'Chương trình', number:'Ctr KTGS 2026', date:'2026', issuer:'Đảng ủy HQKV8', title:'Chương trình KTGS năm 2026 của Đảng ủy Chi cục HQKV8', field:'Tổng hợp', keywords:['năm 2026','HQKV8','chương trình'], important:true, file:'../VB KTGS/KV8-Ctr KTGS 2026 (10).pdf' },
+  { id:19,group:'dukv8', icon:'🔵', type:'Chương trình', number:'Ctr UBKT 2026', date:'2026', issuer:'UBKT Đảng ủy HQKV8', title:'Chương trình KTGS năm 2026 của UBKT Đảng ủy Chi cục', field:'Kiểm tra', keywords:['UBKT','năm 2026','chương trình'], important:true, file:'../VB KTGS/KV8-Ctr UBKT ktgs 2026 (09).pdf' },
+  { id:20,group:'dukv8', icon:'🔵', type:'Kế hoạch', number:'KH KTGS Q.II/2026', date:'2026', issuer:'UBKT Đảng ủy HQKV8', title:'Kế hoạch KTGS Quý II.2026 – Đoàn kiểm tra các Chi bộ', field:'Kiểm tra', keywords:['Quý II','kế hoạch','đoàn KTGS'], important:true, file:'../BTCUB-KH 01.26 KTGS.pdf' },
+  { id:21,group:'dukv8', icon:'🔵', type:'Tờ trình', number:'TTr UBKT ban hành QĐ', date:'2026', issuer:'UBKT Đảng ủy HQKV8', title:'Tờ trình ban hành các Quyết định KTGS Quý II.2026', field:'Kiểm tra', keywords:['tờ trình','quyết định','UBKT'], important:false, file:'../04TTR.UBKT Tờ trình ban hành QĐ, KH KTGS.pdf' },
+  // MẪU BIỂU
+  { id:22,group:'mauBieu', icon:'📝', type:'Mẫu biểu', number:'Bộ mẫu KTGS', date:'2023', issuer:'UBKT Trung ương', title:'Bộ mẫu văn bản Kiểm tra Đảng viên theo HD 03/UBKTTW', field:'Kiểm tra', keywords:['mẫu biểu','kiểm tra','đảng viên'], important:true, file:'../Bieu mau HD 03.2023.UBKTTU quy trinh KT,GS chi bo - 13 (Phat hanh)/1. MAU VAN BAN KIEM TRA DANG VIEN/' },
+  { id:23,group:'mauBieu', icon:'📝', type:'Mẫu biểu', number:'Mẫu GS Chi bộ', date:'2023', issuer:'UBKT Trung ương', title:'Mẫu văn bản Giám sát Chi bộ theo HD 03/UBKTTW', field:'Giám sát', keywords:['mẫu biểu','giám sát','chi bộ'], important:true, file:'../Bieu mau HD 03.2023.UBKTTU quy trinh KT,GS chi bo - 13 (Phat hanh)/2. MAU VAN BAN GIAM SAT CHI BO/' },
+  { id:24,group:'mauBieu', icon:'📝', type:'Mẫu biểu', number:'Mẫu KT đại hội VP', date:'2023', issuer:'UBKT Trung ương', title:'Mẫu văn bản Kiểm tra đại hội, văn phòng', field:'Kiểm tra', keywords:['mẫu biểu','đại hội','văn phòng'], important:false, file:'../Bieu mau HD 03.2023.UBKTTU quy trinh KT,GS chi bo - 13 (Phat hanh)/3 .MAU VAN BAN KIEM TRA DHVP/' },
+  { id:25,group:'mauBieu', icon:'📝', type:'Mẫu biểu', number:'Mẫu GQTC', date:'2023', issuer:'UBKT Trung ương', title:'Mẫu văn bản Giải quyết tố cáo', field:'Kỷ luật', keywords:['tố cáo','giải quyết','mẫu biểu'], important:false, file:'../Bieu mau HD 03.2023.UBKTTU quy trinh KT,GS chi bo - 13 (Phat hanh)/5. MAU VAN BAN GQTC/' },
+  { id:26,group:'mauBieu', icon:'📝', type:'Mẫu biểu', number:'Bộ mẫu KTGS HQKV8', date:'2024', issuer:'UBKT Đảng ủy HQKV8', title:'Bộ biểu mẫu Kiểm tra Giám sát Chi cục HQKV8', field:'Tổng hợp', keywords:['mẫu biểu','HQKV8','kiểm tra giám sát'], important:true, file:'../BoBieuMau_KiemTraGiamSat_HQKV8.docx' },
+  // THAM KHẢO
+  { id:27,group:'thamkhao', icon:'📖', type:'Hướng dẫn', number:'HD 05-HD/VPTW', date:'2026', issuer:'Văn phòng TW Đảng', title:'Hướng dẫn thể thức và kỹ thuật trình bày văn bản Đảng', field:'Tổng hợp', keywords:['thể thức','văn bản Đảng','kỹ thuật'], important:false, file:'../VB KTGS/TW-HD 05.26.VPTW Thể thức văn bản Đảng.pdf' },
+  { id:28,group:'thamkhao', icon:'📖', type:'Nghị định', number:'NĐ 172/2025/NĐ-CP', date:'2025', issuer:'Chính phủ', title:'Nghị định về kỷ luật cán bộ công chức', field:'Kỷ luật', keywords:['kỷ luật','cán bộ công chức','nghị định'], important:false, file:'../VB KTGS/ND 172.25.CP kỷ luật.doc' },
+];
+
+// ══ LOGIC ══
+let currentGroup = 'all';
+let currentView = 'list';
+let currentDocId = null;
+const starred = new Set(JSON.parse(localStorage.getItem('starred') || '[]'));
+
+function getFiltered() {
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const tp  = document.getElementById('filterType').value;
+  const fd  = document.getElementById('filterField').value;
+  const imp = document.getElementById('showImportant').checked;
+  return DOCS.filter(d => {
+    if(currentGroup !== 'all' && d.group !== currentGroup) return false;
+    if(imp && !d.important && !starred.has(d.id)) return false;
+    if(tp && d.type !== tp) return false;
+    if(fd && d.field !== fd) return false;
+    if(q && !d.title.toLowerCase().includes(q) && !d.number.toLowerCase().includes(q) &&
+       !d.keywords.some(k=>k.toLowerCase().includes(q))) return false;
+    return true;
+  });
+}
+
+function renderCats() {
+  const counts = {};
+  DOCS.forEach(d => { counts[d.group] = (counts[d.group]||0)+1; });
+  CATEGORIES[0].count = DOCS.length;
+  CATEGORIES.slice(1).forEach(c => c.count = counts[c.id]||0);
+  document.getElementById('totalDocs').textContent = DOCS.length;
+  const list = document.getElementById('catList');
+  list.innerHTML = CATEGORIES.map(c => `
+    <div class="cat-item ${c.id===currentGroup?'active':''}" onclick="setGroup('${c.id}')">
+      <span class="cat-icon">${c.icon}</span>
+      <span class="cat-name">${c.name}</span>
+      <span class="cat-count">${c.count}</span>
+    </div>`).join('');
+}
+
+function typeBadgeClass(type) {
+  const map = {'Quy định':'badge-navy','Hướng dẫn':'badge-teal','Nghị quyết':'badge-red','Quyết định':'badge-navy','Kế hoạch':'badge-green','Chương trình':'badge-green','Mẫu biểu':'badge-purple','Quy trình':'badge-teal','Chỉ thị':'badge-red','Tờ trình':'badge-gray','Nghị định':'badge-gray'};
+  return map[type] || 'badge-gray';
+}
+
+function fieldBadgeClass(f) {
+  return {'Kiểm tra':'badge-navy','Giám sát':'badge-teal','Kỷ luật':'badge-red','Tổng hợp':'badge-gold'}[f]||'badge-gray';
+}
+
+function renderDocs() {
+  const docs = getFiltered();
+  document.getElementById('resultCount').innerHTML = `Hiển thị <strong>${docs.length}</strong> / ${DOCS.length} văn bản`;
+  const container = document.getElementById('docContainer');
+  if(!docs.length){
+    container.innerHTML = `<div class="empty-state"><div class="es-icon">🔍</div><div class="es-title">Không tìm thấy tài liệu phù hợp</div><div>Thử thay đổi từ khóa hoặc bộ lọc</div></div>`;
+    return;
+  }
+  if(currentView==='list'){
+    container.className='doc-list';
+    container.innerHTML = docs.map(d => `
+      <div class="doc-card ${d.important||starred.has(d.id)?'important':''}" onclick="openModal(${d.id})">
+        <div class="doc-icon">${d.icon}</div>
+        <div class="doc-body">
+          <div class="doc-title">${starred.has(d.id)?'⭐ ':''}${d.title}</div>
+          <div class="doc-meta">
+            <span class="badge ${typeBadgeClass(d.type)}">${d.type}</span>
+            <span class="badge ${fieldBadgeClass(d.field)}">${d.field}</span>
+            <span>📌 ${d.number}</span>
+            <span>📅 ${d.date}</span>
+            <span>🏛️ ${d.issuer}</span>
+          </div>
+          <div class="doc-keywords">${d.keywords.map(k=>`<span class="kw-tag">${k}</span>`).join('')}</div>
+        </div>
+        <div class="doc-actions">
+          <button class="action-btn ${starred.has(d.id)?'starred':''}" onclick="event.stopPropagation();toggleStarId(${d.id})" title="Đánh dấu quan trọng">⭐</button>
+          <a class="action-btn" href="${d.file}" target="_blank" onclick="event.stopPropagation()" title="Mở tài liệu">📂</a>
+        </div>
+      </div>`).join('');
+  } else {
+    container.className='doc-grid';
+    container.innerHTML = docs.map(d => `
+      <div class="doc-grid-card ${d.important||starred.has(d.id)?'important':''}" onclick="openModal(${d.id})">
+        <div class="doc-grid-icon">${d.icon}</div>
+        <div class="doc-grid-title">${d.title}</div>
+        <div class="doc-grid-meta">${d.number} · ${d.date}</div>
+        <div style="text-align:center;margin-top:4px;"><span class="badge ${typeBadgeClass(d.type)}">${d.type}</span></div>
+      </div>`).join('');
+  }
+}
+
+function openModal(id) {
+  currentDocId = id;
+  const d = DOCS.find(x=>x.id===id);
+  document.getElementById('mIcon').textContent = d.icon;
+  document.getElementById('mTitle').textContent = d.title;
+  document.getElementById('mSub').textContent = `${d.number} · ${d.issuer} · ${d.date}`;
+  document.getElementById('mBtnOpen').href = d.file;
+  document.getElementById('mBtnStar').textContent = starred.has(id) ? '⭐ Bỏ đánh dấu' : '⭐ Đánh dấu quan trọng';
+  document.getElementById('mGrid').innerHTML = `
+    <div class="info-item"><label>Số/ký hiệu</label><div class="value">${d.number}</div></div>
+    <div class="info-item"><label>Ngày ban hành</label><div class="value">${d.date}</div></div>
+    <div class="info-item"><label>Cơ quan ban hành</label><div class="value">${d.issuer}</div></div>
+    <div class="info-item"><label>Loại văn bản</label><div class="value"><span class="badge ${typeBadgeClass(d.type)}">${d.type}</span></div></div>
+    <div class="info-item"><label>Lĩnh vực</label><div class="value"><span class="badge ${fieldBadgeClass(d.field)}">${d.field}</span></div></div>
+    <div class="info-item"><label>Tài liệu quan trọng</label><div class="value">${d.important?'⭐ Có':'Không'}</div></div>
+    <div class="info-item full"><label>Trích yếu nội dung</label><div class="value">${d.title}</div></div>
+    <div class="info-item full"><label>Từ khóa</label><div class="value doc-keywords">${d.keywords.map(k=>`<span class="kw-tag">${k}</span>`).join('')}</div></div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function toggleStar() { toggleStarId(currentDocId); openModal(currentDocId); }
+function toggleStarId(id) {
+  starred.has(id) ? starred.delete(id) : starred.add(id);
+  localStorage.setItem('starred', JSON.stringify([...starred]));
+  renderDocs();
+}
+function closeModal(e) { if(e.target===document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+function setGroup(g) { currentGroup=g; renderCats(); renderDocs(); }
+function setView(v,el) { currentView=v; document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderDocs(); }
+function doSearch() { renderDocs(); }
+function clearFilters() { document.getElementById('searchInput').value=''; document.getElementById('filterType').value=''; document.getElementById('filterField').value=''; document.getElementById('showImportant').checked=false; renderDocs(); }
+
+function switchTab(tab) {
+  const isDocs = tab==='docs';
+  document.getElementById('panelDocs').style.display   = isDocs?'block':'none';
+  document.getElementById('panelProcess').style.display = isDocs?'none':'block';
+  document.getElementById('tabDocs').style.color     = isDocs?'var(--red)':'var(--gray3)';
+  document.getElementById('tabDocs').style.borderBottomColor = isDocs?'var(--red)':'transparent';
+  document.getElementById('tabProcess').style.color  = isDocs?'var(--gray3)':'var(--navy)';
+  document.getElementById('tabProcess').style.borderBottomColor = isDocs?'transparent':'var(--navy)';
+}
+
+// Init
+renderCats();
+renderDocs();
+</script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/integration.js"></script>
+</body>
+</html>

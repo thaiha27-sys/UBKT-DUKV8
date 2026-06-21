@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chương trình KTGS | UBKT HQKV8</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --red:#CC0000;--red-dark:#990000;--red-light:#ffecec;
+      --gold:#D4A017;--gold-lt:#FFF8E1;
+      --navy:#003087;--navy-lt:#E8F0FE;
+      --green:#1A7A4A;--green-lt:#E8F5EE;
+      --teal:#006064;--teal-lt:#E0F7FA;
+      --orange:#D46B00;--orange-lt:#FFF3E0;
+      --purple:#5B2C8D;--purple-lt:#F3E8FF;
+      --gray1:#1C1C2E;--gray2:#3D3D5C;--gray3:#7B7B9B;
+      --gray4:#C8C8DC;--gray5:#F0F0F8;--white:#fff;
+      --sidebar-w:240px;--header-h:64px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,.08);
+      --shadow-md:0 4px 16px rgba(0,0,0,.12);
+      --radius:10px;--radius-sm:6px;
+    }
+    html,body{height:100%;font-family:'Be Vietnam Pro',sans-serif;background:var(--gray5);color:var(--gray1);font-size:14px;}
+    ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:var(--gray4);border-radius:3px;}
+
+    /* HEADER */
+    .header{position:fixed;top:0;left:0;right:0;height:var(--header-h);
+      background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 50%,#A00000 100%);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 20px;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.25);}
+    .header-left{display:flex;align-items:center;gap:14px;}
+    .logo-hq{width:50px;height:50px;border-radius:50%;background:#CC0000;overflow:hidden;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));flex-shrink:0;}
+    .logo-hq img{width:50px;height:50px;object-fit:cover;border-radius:50%;display:block;}
+    .header-divider{width:1px;height:36px;background:rgba(255,255,255,.25);margin:0 6px;}
+    .header-title .main{font-size:14px;font-weight:700;color:#fff;}
+    .header-title .sub{font-size:11px;color:rgba(255,255,255,.85);margin-top:1px;}
+    .header-right{display:flex;align-items:center;gap:10px;}
+    .user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:24px;padding:5px 12px 5px 5px;border:1px solid rgba(255,255,255,.2);}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--red-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
+    .user-info .name{font-size:12px;font-weight:600;color:#fff;}
+    .user-info .role{font-size:10px;color:rgba(255,255,255,.8);}
+    .header-back{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.3);transition:all .2s;}
+    .header-back:hover{background:rgba(255,255,255,.2);}
+
+    /* LAYOUT */
+    .layout{display:flex;padding-top:var(--header-h);min-height:100vh;}
+
+    /* SIDEBAR */
+    .sidebar{position:fixed;left:0;top:var(--header-h);bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray4);overflow-y:auto;z-index:900;display:flex;flex-direction:column;}
+    .sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--gray3);text-transform:uppercase;padding:16px 16px 6px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--gray2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;position:relative;}
+    .nav-item:hover{background:var(--gray5);color:var(--red);}
+    .nav-item.active{background:var(--red-light);color:var(--red);font-weight:600;}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);border-radius:0 2px 2px 0;}
+    .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;}
+    .nav-badge.green{background:var(--green);}
+    .nav-badge.orange{background:var(--orange);}
+    .sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--gray4);font-size:11px;color:var(--gray3);line-height:1.6;}
+
+    /* MAIN */
+    .main{margin-left:var(--sidebar-w);flex:1;padding:20px;min-height:calc(100vh - var(--header-h));}
+
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+    .page-title-wrap .page-title{font-size:20px;font-weight:700;color:var(--gray1);}
+    .page-title-wrap .page-sub{font-size:12px;color:var(--gray3);margin-top:3px;}
+    .page-actions{display:flex;gap:8px;flex-wrap:wrap;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Be Vietnam Pro',sans-serif;}
+    .btn-primary{background:var(--red);color:white;}
+    .btn-primary:hover{background:var(--red-dark);}
+    .btn-outline{background:white;color:var(--gray2);border:1px solid var(--gray4);}
+    .btn-outline:hover{border-color:var(--red);color:var(--red);}
+
+    /* KPI CARDS */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .kpi-card{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);border-top:3px solid transparent;position:relative;overflow:hidden;}
+    .kpi-card::after{content:'';position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;opacity:.07;}
+    .kpi-card.red{border-top-color:var(--red);}  .kpi-card.red::after{background:var(--red);}
+    .kpi-card.blue{border-top-color:var(--navy);} .kpi-card.blue::after{background:var(--navy);}
+    .kpi-card.green{border-top-color:var(--green);} .kpi-card.green::after{background:var(--green);}
+    .kpi-card.orange{border-top-color:var(--orange);} .kpi-card.orange::after{background:var(--orange);}
+    .kpi-card.purple{border-top-color:var(--purple);} .kpi-card.purple::after{background:var(--purple);}
+    .kpi-label{font-size:11px;color:var(--gray3);font-weight:500;margin-bottom:6px;}
+    .kpi-value{font-size:28px;font-weight:700;line-height:1;}
+    .kpi-card.red .kpi-value{color:var(--red);}
+    .kpi-card.blue .kpi-value{color:var(--navy);}
+    .kpi-card.green .kpi-value{color:var(--green);}
+    .kpi-card.orange .kpi-value{color:var(--orange);}
+    .kpi-card.purple .kpi-value{color:var(--purple);}
+    .kpi-sub{font-size:10px;color:var(--gray3);margin-top:4px;}
+    .kpi-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:.25;}
+
+    /* FILTER BAR */
+    .filter-bar{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .filter-bar label{font-size:11px;font-weight:600;color:var(--gray3);margin-right:4px;}
+    .filter-select{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--gray4);font-size:12px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray2);background:white;cursor:pointer;min-width:130px;}
+    .filter-select:focus{outline:none;border-color:var(--red);}
+    .search-wrap{position:relative;flex:1;min-width:200px;}
+    .search-wrap input{width:100%;padding:7px 10px 7px 32px;border-radius:var(--radius-sm);border:1px solid var(--gray4);font-size:12px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray1);background:white;}
+    .search-wrap input:focus{outline:none;border-color:var(--red);}
+    .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--gray3);}
+
+    /* TABLE CARD */
+    .table-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+    .table-card-header{padding:14px 16px;border-bottom:1px solid var(--gray5);display:flex;align-items:center;justify-content:space-between;}
+    .table-card-title{font-size:14px;font-weight:700;color:var(--gray1);}
+    .table-card-sub{font-size:11px;color:var(--gray3);margin-top:2px;}
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{background:var(--gray5);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+    tbody tr{border-bottom:1px solid var(--gray5);transition:background .15s;cursor:pointer;}
+    tbody tr:last-child{border-bottom:none;}
+    tbody tr:hover{background:#fafafa;}
+    td{padding:11px 14px;font-size:13px;color:var(--gray2);vertical-align:middle;}
+    .td-name{font-weight:600;color:var(--gray1);line-height:1.4;}
+    .td-sub{font-size:11px;color:var(--gray3);margin-top:2px;}
+
+    /* BADGES */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+    .badge-kt{background:#FFF0F0;color:#CC0000;}
+    .badge-gs{background:var(--navy-lt);color:var(--navy);}
+    .badge-done{background:var(--green-lt);color:var(--green);}
+    .badge-progress{background:var(--teal-lt);color:var(--teal);}
+    .badge-todo{background:var(--gray5);color:var(--gray3);}
+    .badge-late{background:var(--orange-lt);color:var(--orange);}
+    .badge-overdue{background:#FFF0F0;color:#CC0000;}
+
+    /* PROGRESS BAR */
+    .prog-wrap{display:flex;align-items:center;gap:8px;}
+    .prog-bar{flex:1;height:6px;background:var(--gray5);border-radius:3px;overflow:hidden;min-width:60px;}
+    .prog-fill{height:100%;border-radius:3px;transition:width .3s;}
+    .prog-fill.done{background:var(--green);}
+    .prog-fill.progress{background:var(--teal);}
+    .prog-fill.late{background:var(--orange);}
+    .prog-fill.todo{background:var(--gray4);}
+    .prog-pct{font-size:11px;font-weight:600;color:var(--gray2);width:30px;text-align:right;}
+
+    /* ACTION BTNS */
+    .action-btns{display:flex;gap:4px;}
+    .action-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:1px solid var(--gray4);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--gray3);transition:all .15s;}
+    .action-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .modal-overlay.open{opacity:1;pointer-events:auto;}
+    .modal{background:white;border-radius:14px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(20px);transition:transform .2s;}
+    .modal-overlay.open .modal{transform:translateY(0);}
+    .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--gray5);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:white;z-index:1;}
+    .modal-title{font-size:16px;font-weight:700;color:var(--gray1);line-height:1.3;}
+    .modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--gray4);background:white;cursor:pointer;font-size:16px;color:var(--gray3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .modal-close:hover{background:var(--gray5);}
+    .modal-body{padding:20px 24px;}
+    .modal-section{margin-bottom:20px;}
+    .modal-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gray5);}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .info-item label{font-size:11px;color:var(--gray3);font-weight:500;display:block;margin-bottom:3px;}
+    .info-item span{font-size:13px;color:var(--gray1);font-weight:500;}
+    .steps-list{display:flex;flex-direction:column;gap:0;}
+    .step-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--gray5);}
+    .step-row:last-child{border-bottom:none;}
+    .step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+    .step-num.done{background:var(--green);color:white;}
+    .step-num.active{background:var(--teal);color:white;}
+    .step-num.todo{background:var(--gray4);color:var(--gray3);}
+    .step-text{font-size:12px;color:var(--gray2);line-height:1.5;}
+    .step-text.done{color:var(--gray3);text-decoration:line-through;}
+    .team-list{display:flex;flex-wrap:wrap;gap:6px;}
+    .team-tag{background:var(--navy-lt);color:var(--navy);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:500;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--gray5);display:flex;gap:8px;justify-content:flex-end;}
+
+    /* TABS */
+    .tabs{display:flex;gap:4px;margin-bottom:16px;background:white;border-radius:var(--radius);padding:4px;box-shadow:var(--shadow-sm);width:fit-content;}
+    .tab{padding:7px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;color:var(--gray3);transition:all .2s;border:none;background:transparent;font-family:'Be Vietnam Pro',sans-serif;}
+    .tab.active{background:var(--red);color:white;}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:48px 20px;color:var(--gray3);}
+    .empty-state .icon{font-size:48px;margin-bottom:12px;}
+    .empty-state p{font-size:13px;}
+
+    /* FORM */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .form-group{display:flex;flex-direction:column;gap:5px;}
+    .form-group.full{grid-column:1/-1;}
+    .form-group label{font-size:11px;font-weight:600;color:var(--gray2);}
+    .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1px solid var(--gray4);border-radius:var(--radius-sm);font-size:13px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray1);background:white;transition:border .2s;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--red);}
+    .form-group textarea{resize:vertical;min-height:80px;}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-hq"><img src="../logo-haiquan.png" alt="Hải quan Việt Nam"/></div>
+    <div class="header-divider"></div>
+    <div class="header-title">
+      <div class="main">HỆ THỐNG QUẢN LÝ KTGS & KỶ LUẬT ĐẢNG</div>
+      <div class="sub">Ủy ban Kiểm tra Đảng ủy Chi cục Hải quan Khu vực VIII</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="../index.html" class="header-back">← Tổng quan</a>
+    <div class="user-badge">
+      <div class="user-avatar">K8</div>
+      <div class="user-info">
+        <div class="name">UBKT Đảng ủy KV8</div>
+        <div class="role">Thường trực UBKT</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section-label">Tổng quan</div>
+    <a href="../index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+
+    <div class="sidebar-section-label">Nghiệp vụ</div>
+    <a href="ph1-library.html" class="nav-item"><span class="nav-icon">📚</span>Thư viện nghiệp vụ</a>
+    <a href="ph2-programs.html" class="nav-item active"><span class="nav-icon">📋</span>Chương trình KTGS</a>
+    <a href="ph3-cases.html" class="nav-item"><span class="nav-icon">📁</span>Hồ sơ cuộc KTGS<span class="nav-badge">3</span></a>
+    <a href="ph4-conclusions.html" class="nav-item"><span class="nav-icon">✅</span>Theo dõi kết luận<span class="nav-badge orange">5</span></a>
+    <a href="ph5-reports.html" class="nav-item"><span class="nav-icon">📊</span>Báo cáo & Thống kê</a>
+    <a href="theo-doi-chibo.html" class="nav-item"><span class="nav-icon">🗂️</span>Tiến độ KTGS Chi bộ<span class="nav-badge green">13</span></a>
+
+    <div class="sidebar-section-label">Hệ thống</div>
+    <a href="#" class="nav-item"><span class="nav-icon">👥</span>Quản lý người dùng</a>
+    <a href="#" class="nav-item"><span class="nav-icon">⚙️</span>Cài đặt hệ thống</a>
+    <a href="#" class="nav-item"><span class="nav-icon">📜</span>Nhật ký thao tác</a>
+
+    <div class="sidebar-footer">
+      Phiên bản: 1.0.0<br/>
+      Nhiệm kỳ: 2025 – 2030
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <div class="page-title">📋 Chương trình Kiểm tra, Giám sát</div>
+        <div class="page-sub">Năm 2026 · Nhiệm kỳ 2025–2030 · Đảng ủy & UBKT Chi cục Hải quan Khu vực VIII</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-outline" onclick="exportData()">⬇ Xuất Excel</button>
+        <button class="btn btn-primary" onclick="openAddModal()">＋ Thêm cuộc KTGS</button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'all')">Tất cả (20)</button>
+      <button class="tab" onclick="switchTab(this,'kt')">Kiểm tra (12)</button>
+      <button class="tab" onclick="switchTab(this,'gs')">Giám sát (8)</button>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card red">
+        <div class="kpi-label">Tổng chương trình</div>
+        <div class="kpi-value">20</div>
+        <div class="kpi-sub">KT: 12 · GS: 8 · Năm 2026</div>
+        <div class="kpi-icon">📋</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Đã hoàn thành</div>
+        <div class="kpi-value">6</div>
+        <div class="kpi-sub">30% tổng số · Đúng tiến độ</div>
+        <div class="kpi-icon">✅</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">Đang thực hiện</div>
+        <div class="kpi-value">7</div>
+        <div class="kpi-sub">KT: 4 · GS: 3 · Trung bình 35%</div>
+        <div class="kpi-icon">⏳</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Chậm / Quá hạn</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">Cần xử lý ngay</div>
+        <div class="kpi-icon">⚠️</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">Chưa bắt đầu</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-sub">Dự kiến Quý III–IV/2026</div>
+        <div class="kpi-icon">📅</div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Tìm tên cuộc, Chi bộ, đoàn kiểm tra..." oninput="applyFilter()"/>
+      </div>
+      <div>
+        <label>Quý:</label>
+        <select class="filter-select" id="filterQuy" onchange="applyFilter()">
+          <option value="">Tất cả các quý</option>
+          <option value="Q1">Quý I</option>
+          <option value="Q2">Quý II</option>
+          <option value="Q3">Quý III</option>
+          <option value="Q4">Quý IV</option>
+        </select>
+      </div>
+      <div>
+        <label>Chủ thể:</label>
+        <select class="filter-select" id="filterChuThe" onchange="applyFilter()">
+          <option value="">Đảng ủy & UBKT</option>
+          <option value="du">Đảng ủy</option>
+          <option value="ubkt">UBKT</option>
+        </select>
+      </div>
+      <div>
+        <label>Trạng thái:</label>
+        <select class="filter-select" id="filterStatus" onchange="applyFilter()">
+          <option value="">Tất cả</option>
+          <option value="done">Hoàn thành</option>
+          <option value="progress">Đang thực hiện</option>
+          <option value="late">Chậm tiến độ</option>
+          <option value="overdue">Quá hạn</option>
+          <option value="todo">Chưa bắt đầu</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <div>
+          <div class="table-card-title">Danh sách cuộc Kiểm tra, Giám sát năm 2026</div>
+          <div class="table-card-sub" id="resultCount">Hiển thị 20 cuộc · Nhấn vào dòng để xem chi tiết</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Tên cuộc / Nội dung</th>
+              <th>Loại</th>
+              <th>Chủ thể</th>
+              <th>Đối tượng</th>
+              <th>Thời gian</th>
+              <th>Tiến độ</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display:none">
+          <div class="icon">🔍</div>
+          <p>Không tìm thấy kết quả phù hợp</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL CHI TIẾT -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Chi tiết cuộc KTGS</div>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('detailModal')">Đóng</button>
+      <button class="btn btn-primary" id="modalEditBtn">✏️ Cập nhật tiến độ</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL THÊM MỚI -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">➕ Thêm cuộc Kiểm tra / Giám sát</div>
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Tên cuộc kiểm tra / giám sát *</label>
+          <input type="text" id="f_name" placeholder="VD: Kiểm tra toàn diện CB Phòng Nghiệp vụ"/>
+        </div>
+        <div class="form-group">
+          <label>Loại hình *</label>
+          <select id="f_type">
+            <option value="kt">Kiểm tra</option>
+            <option value="gs">Giám sát</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Chủ thể thực hiện *</label>
+          <select id="f_chuthe">
+            <option value="ubkt">UBKT Đảng ủy</option>
+            <option value="du">Đảng ủy</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Đối tượng (Chi bộ / đảng viên) *</label>
+          <select id="f_target">
+            <option value="">-- Chọn Chi bộ --</option>
+            <option>CB Văn phòng</option>
+            <option>CB Phòng TCCB</option>
+            <option>CB Phòng Nghiệp vụ</option>
+            <option>CB Phòng QLRR</option>
+            <option>CB Phòng CNTT</option>
+            <option>CB Đội PT&KTSTQ</option>
+            <option>CB Đội KSHQ</option>
+            <option>CB HQCK QT Móng Cái</option>
+            <option>CB HQCK Hoành Mô</option>
+            <option>CB HQCK Bắc Phong Sinh</option>
+            <option>CB HQCK cảng Hòn Gai</option>
+            <option>CB HQCK cảng Cẩm Phả</option>
+            <option>CB HQCK cảng Vạn Gia</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quý thực hiện</label>
+          <select id="f_quy">
+            <option value="Q1">Quý I/2026</option>
+            <option value="Q2">Quý II/2026</option>
+            <option value="Q3" selected>Quý III/2026</option>
+            <option value="Q4">Quý IV/2026</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Thời hạn hoàn thành</label>
+          <input type="date" id="f_deadline"/>
+        </div>
+        <div class="form-group full">
+          <label>Chủ nhiệm đoàn</label>
+          <select id="f_lead">
+            <option>Đ/c Bùi Ngọc Lợi – Chủ nhiệm UBKT</option>
+            <option>Đ/c Tống Thị Thái Hà – Thường trực UBKT</option>
+            <option>Đ/c Võ Hồng Chung – Thành viên UBKT</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Ghi chú / Nội dung kiểm tra</label>
+          <textarea id="f_note" placeholder="Kiểm tra việc chấp hành Điều lệ Đảng, nghị quyết, chỉ thị..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addModal')">Hủy</button>
+      <button class="btn btn-primary" onclick="saveNewProgram()">💾 Lưu chương trình</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROGRAMS = [
+  {id:'P001',name:'Kiểm tra toàn diện Chi bộ Phòng Nghiệp vụ',type:'kt',chuthe:'ubkt',target:'CB Phòng Nghiệp vụ',quy:'Q2',deadline:'2026-07-30',status:'progress',pct:70,step:7,lead:'Đ/c Bùi Ngọc Lợi',team:['Bùi Ngọc Lợi','Tống Thị Thái Hà','Võ Hồng Chung'],note:'Kiểm tra toàn diện việc chấp hành Điều lệ Đảng, nghị quyết, chỉ thị của cấp ủy cấp trên và cấp mình.',steps:[{s:'Xây dựng kế hoạch kiểm tra',d:true},{s:'Ban hành Quyết định thành lập Đoàn',d:true},{s:'Thông báo cho tổ chức/đảng viên được KT',d:true},{s:'Thu thập thông tin, tài liệu',d:true},{s:'Làm việc trực tiếp với đối tượng',d:true},{s:'Thẩm tra, xác minh',d:true},{s:'Báo cáo kết quả với UBKT',d:false},{s:'Thông báo kết quả với chi bộ',d:false},{s:'Kết luận kiểm tra',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+  {id:'P002',name:'Giám sát chuyên đề thực hiện NQ05 – CB Đội KSHQ',type:'gs',chuthe:'ubkt',target:'CB Đội KSHQ',quy:'Q2',deadline:'2026-07-15',status:'progress',pct:40,step:4,lead:'Đ/c Tống Thị Thái Hà',team:['Tống Thị Thái Hà','Võ Hồng Chung'],note:'Giám sát chuyên đề việc thực hiện Nghị quyết số 05 về nâng cao chất lượng đội ngũ đảng viên.',steps:[{s:'Xây dựng kế hoạch giám sát',d:true},{s:'Thông báo kế hoạch giám sát',d:true},{s:'Yêu cầu báo cáo tự kiểm tra',d:true},{s:'Nghiên cứu tài liệu, hồ sơ',d:true},{s:'Làm việc với chi bộ và đảng viên',d:false},{s:'Xem xét, đánh giá thông tin',d:false},{s:'Kết luận giám sát',d:false},{s:'Thông báo kết luận',d:false},{s:'Theo dõi thực hiện kết luận',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+  {id:'P003',name:'Kiểm tra đảng viên diện BTV quản lý – CB HQCK QT Móng Cái',type:'kt',chuthe:'ubkt',target:'CB HQCK QT Móng Cái',quy:'Q2',deadline:'2026-06-30',status:'late',pct:50,step:5,lead:'Đ/c Bùi Ngọc Lợi',team:['Bùi Ngọc Lợi','Tống Thị Thái Hà'],note:'Kiểm tra đảng viên thuộc diện BTV Đảng ủy quản lý tại Chi bộ HQCK QT Móng Cái.',steps:[{s:'Xây dựng kế hoạch kiểm tra',d:true},{s:'Ban hành Quyết định thành lập Đoàn',d:true},{s:'Thông báo cho đảng viên được KT',d:true},{s:'Thu thập thông tin, tài liệu',d:true},{s:'Thẩm tra, xác minh hồ sơ',d:true},{s:'Làm việc trực tiếp với đảng viên',d:false},{s:'Báo cáo kết quả với UBKT',d:false},{s:'Kết luận kiểm tra đảng viên',d:false},{s:'Thông báo kết quả',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+  {id:'P004',name:'Giám sát thường xuyên CB Văn phòng',type:'gs',chuthe:'du',target:'CB Văn phòng',quy:'Q2',deadline:'2026-08-15',status:'progress',pct:20,step:2,lead:'Đ/c Võ Hồng Chung',team:['Võ Hồng Chung'],note:'Giám sát thường xuyên tình hình thực hiện nhiệm vụ chính trị và công tác xây dựng Đảng tại Chi bộ Văn phòng.',steps:[{s:'Xây dựng kế hoạch giám sát',d:true},{s:'Nghiên cứu tài liệu báo cáo',d:true},{s:'Dự sinh hoạt chi bộ định kỳ',d:false},{s:'Theo dõi thực hiện nghị quyết',d:false},{s:'Kiểm tra hồ sơ đảng viên',d:false},{s:'Phản ánh, kiến nghị (nếu có)',d:false},{s:'Lưu hồ sơ giám sát',d:false},{s:'Báo cáo kết quả giám sát',d:false},{s:'Kết luận giám sát',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+  {id:'P005',name:'Kiểm tra thực hiện Điều lệ Đảng – CB Phòng QLRR',type:'kt',chuthe:'du',target:'CB Phòng QLRR',quy:'Q3',deadline:'2026-09-30',status:'todo',pct:10,step:1,lead:'Đ/c Bùi Ngọc Lợi',team:['Bùi Ngọc Lợi','Tống Thị Thái Hà','Võ Hồng Chung'],note:'Kiểm tra việc chấp hành Điều lệ Đảng, các nghị quyết và chỉ thị của cấp ủy tại CB Phòng QLRR.',steps:[{s:'Xây dựng kế hoạch kiểm tra',d:false},{s:'Ban hành Quyết định thành lập Đoàn',d:false},{s:'Thông báo cho tổ chức được KT',d:false},{s:'Thu thập thông tin, tài liệu',d:false},{s:'Làm việc trực tiếp',d:false},{s:'Thẩm tra, xác minh',d:false},{s:'Báo cáo kết quả',d:false},{s:'Thông báo kết quả',d:false},{s:'Kết luận kiểm tra',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+  {id:'P006',name:'Kiểm tra tài chính Đảng năm 2025 – Đảng ủy',type:'kt',chuthe:'ubkt',target:'Đảng ủy Chi cục',quy:'Q1',deadline:'2026-03-31',status:'done',pct:100,step:10,lead:'Đ/c Bùi Ngọc Lợi',team:['Bùi Ngọc Lợi','Tống Thị Thái Hà'],note:'Kiểm tra tài chính Đảng năm 2025, thu chi quỹ Đảng, công đoàn và các khoản đóng góp của đảng viên.',steps:[{s:'Xây dựng kế hoạch KT tài chính',d:true},{s:'Thu thập hồ sơ, sổ sách kế toán',d:true},{s:'Kiểm tra thu, chi quỹ Đảng',d:true},{s:'Kiểm tra thu, chi quỹ công đoàn',d:true},{s:'Đối chiếu số liệu với kho bạc',d:true},{s:'Xác minh các khoản chi',d:true},{s:'Kết luận kiểm tra tài chính',d:true},{s:'Ban hành thông báo kết luận',d:true},{s:'Theo dõi khắc phục (nếu có)',d:true},{s:'Lưu trữ hồ sơ',d:true}]},
+  {id:'P007',name:'Giám sát chuyên đề thực hiện QCDC – CB HQCK cảng Hòn Gai',type:'gs',chuthe:'du',target:'CB HQCK cảng Hòn Gai',quy:'Q1',deadline:'2026-03-31',status:'done',pct:100,step:10,lead:'Đ/c Võ Hồng Chung',team:['Võ Hồng Chung','Tống Thị Thái Hà'],note:'Giám sát chuyên đề việc thực hiện Quy chế dân chủ cơ sở tại Chi bộ HQCK cảng Hòn Gai.',steps:[{s:'Xây dựng kế hoạch giám sát',d:true},{s:'Thông báo kế hoạch',d:true},{s:'Yêu cầu báo cáo tự kiểm tra',d:true},{s:'Nghiên cứu tài liệu',d:true},{s:'Làm việc với chi bộ',d:true},{s:'Xem xét, đánh giá',d:true},{s:'Kết luận giám sát',d:true},{s:'Thông báo kết luận',d:true},{s:'Theo dõi thực hiện',d:true},{s:'Lưu trữ hồ sơ',d:true}]},
+  {id:'P008',name:'Kiểm tra tổng hợp CB Đội KSHQ',type:'kt',chuthe:'ubkt',target:'CB Đội KSHQ',quy:'Q4',deadline:'2026-11-30',status:'todo',pct:0,step:0,lead:'Đ/c Bùi Ngọc Lợi',team:['Bùi Ngọc Lợi','Tống Thị Thái Hà','Võ Hồng Chung'],note:'Kiểm tra tổng hợp công tác xây dựng Đảng tại CB Đội Kiểm soát Hải quan.',steps:[{s:'Xây dựng kế hoạch kiểm tra',d:false},{s:'Ban hành Quyết định',d:false},{s:'Thông báo cho CB được KT',d:false},{s:'Thu thập tài liệu',d:false},{s:'Làm việc trực tiếp',d:false},{s:'Thẩm tra, xác minh',d:false},{s:'Báo cáo kết quả',d:false},{s:'Kết luận kiểm tra',d:false},{s:'Thông báo kết luận',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+  {id:'P009',name:'Giám sát thực hiện NQ Đại hội – CB Phòng TCCB',type:'gs',chuthe:'du',target:'CB Phòng TCCB',quy:'Q1',deadline:'2026-03-15',status:'done',pct:100,step:10,lead:'Đ/c Tống Thị Thái Hà',team:['Tống Thị Thái Hà'],note:'Giám sát việc triển khai thực hiện Nghị quyết Đại hội Đảng bộ nhiệm kỳ 2025–2030.',steps:[{s:'Xây dựng kế hoạch',d:true},{s:'Thông báo',d:true},{s:'Thu thập báo cáo',d:true},{s:'Nghiên cứu hồ sơ',d:true},{s:'Làm việc với CB',d:true},{s:'Đánh giá kết quả',d:true},{s:'Kết luận',d:true},{s:'Thông báo kết luận',d:true},{s:'Theo dõi',d:true},{s:'Lưu trữ',d:true}]},
+  {id:'P010',name:'Kiểm tra đảng viên có đơn thư – CB Phòng Nghiệp vụ',type:'kt',chuthe:'ubkt',target:'CB Phòng Nghiệp vụ',quy:'Q2',deadline:'2026-06-15',status:'overdue',pct:30,step:3,lead:'Đ/c Bùi Ngọc Lợi',team:['Bùi Ngọc Lợi','Tống Thị Thái Hà'],note:'Kiểm tra đảng viên có đơn tố cáo liên quan đến vi phạm phẩm chất đạo đức lối sống.',steps:[{s:'Xây dựng kế hoạch KT',d:true},{s:'Ban hành Quyết định',d:true},{s:'Gặp người tố cáo',d:true},{s:'Thu thập tài liệu, xác minh',d:false},{s:'Làm việc với đảng viên được KT',d:false},{s:'Báo cáo kết quả xác minh',d:false},{s:'Kết luận kiểm tra',d:false},{s:'Xử lý kỷ luật (nếu có)',d:false},{s:'Thông báo kết luận',d:false},{s:'Lưu trữ hồ sơ',d:false}]},
+];
+
+let currentTab = 'all';
+let filteredData = [...PROGRAMS];
+
+function switchTab(el, tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const quy = document.getElementById('filterQuy').value;
+  const chuthe = document.getElementById('filterChuThe').value;
+  const status = document.getElementById('filterStatus').value;
+
+  filteredData = PROGRAMS.filter(p => {
+    if (currentTab === 'kt' && p.type !== 'kt') return false;
+    if (currentTab === 'gs' && p.type !== 'gs') return false;
+    if (q && !p.name.toLowerCase().includes(q) && !p.target.toLowerCase().includes(q) && !p.lead.toLowerCase().includes(q)) return false;
+    if (quy && p.quy !== quy) return false;
+    if (chuthe && p.chuthe !== chuthe) return false;
+    if (status && p.status !== status) return false;
+    return true;
+  });
+
+  renderTable();
+}
+
+function statusBadge(s) {
+  const m = {done:'badge-done',progress:'badge-progress',todo:'badge-todo',late:'badge-late',overdue:'badge-overdue'};
+  const l = {done:'Hoàn thành',progress:'Đang thực hiện',todo:'Chưa bắt đầu',late:'Chậm tiến độ',overdue:'Quá hạn'};
+  return `<span class="badge ${m[s]||'badge-todo'}">${l[s]||s}</span>`;
+}
+
+function progClass(s) {
+  return {done:'done',progress:'progress',late:'late',overdue:'late',todo:'todo'}[s]||'todo';
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('resultCount').textContent = `Hiển thị ${filteredData.length} cuộc · Nhấn vào dòng để xem chi tiết`;
+
+  if (!filteredData.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filteredData.map((p, i) => `
+    <tr onclick="openDetail('${p.id}')">
+      <td style="color:var(--gray3);font-size:12px">${i+1}</td>
+      <td>
+        <div class="td-name">${p.name}</div>
+        <div class="td-sub">${p.lead} · Bước ${p.step}/10</div>
+      </td>
+      <td>${p.type==='kt'?'<span class="badge badge-kt">Kiểm tra</span>':'<span class="badge badge-gs">Giám sát</span>'}</td>
+      <td style="font-size:12px;color:var(--gray3)">${p.chuthe==='ubkt'?'UBKT':'Đảng ủy'}</td>
+      <td style="font-size:12px">${p.target}</td>
+      <td style="font-size:12px;white-space:nowrap">${p.quy}/2026<br/><span style="color:var(--gray3)">HĐ: ${p.deadline}</span></td>
+      <td>
+        <div class="prog-wrap">
+          <div class="prog-bar"><div class="prog-fill ${progClass(p.status)}" style="width:${p.pct}%"></div></div>
+          <span class="prog-pct">${p.pct}%</span>
+        </div>
+      </td>
+      <td>${statusBadge(p.status)}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <button class="action-btn" title="Xem chi tiết" onclick="openDetail('${p.id}')">👁</button>
+          <button class="action-btn" title="Chỉnh sửa" onclick="alert('Tính năng cập nhật sẽ có trong Sprint 7')">✏️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openDetail(id) {
+  const p = PROGRAMS.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('modalTitle').textContent = p.name;
+
+  const stepsHtml = p.steps.map((s, i) => {
+    const isDone = s.d;
+    const isActive = !isDone && i === p.step;
+    const cls = isDone ? 'done' : isActive ? 'active' : 'todo';
+    return `<div class="step-row">
+      <div class="step-num ${cls}">${i+1}</div>
+      <div class="step-text ${isDone?'done':''}">${s.s}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-title">Thông tin chung</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Loại hình</label><span>${p.type==='kt'?'🔍 Kiểm tra':'👁 Giám sát'}</span></div>
+        <div class="info-item"><label>Chủ thể</label><span>${p.chuthe==='ubkt'?'UBKT Đảng ủy':'Đảng ủy Chi cục'}</span></div>
+        <div class="info-item"><label>Đối tượng</label><span>${p.target}</span></div>
+        <div class="info-item"><label>Thời gian</label><span>${p.quy}/2026</span></div>
+        <div class="info-item"><label>Thời hạn hoàn thành</label><span>${p.deadline}</span></div>
+        <div class="info-item"><label>Trạng thái</label><span>${statusBadge(p.status)}</span></div>
+        <div class="info-item" style="grid-column:1/-1"><label>Nội dung kiểm tra / giám sát</label><span>${p.note}</span></div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Đoàn KTGS</div>
+      <div class="team-list">${p.team.map(t=>`<span class="team-tag">👤 ${t}</span>`).join('')}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Tiến độ thực hiện · Bước ${p.step}/10 · ${p.pct}%</div>
+      <div class="steps-list">${stepsHtml}</div>
+    </div>
+  `;
+
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function openAddModal() {
+  document.getElementById('addModal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function saveNewProgram() {
+  const name = document.getElementById('f_name').value.trim();
+  const target = document.getElementById('f_target').value;
+  if (!name || !target) { alert('Vui lòng điền đầy đủ thông tin bắt buộc (*)'); return; }
+  alert('✅ Đã lưu chương trình mới!\n\nLưu ý: Dữ liệu sẽ được đồng bộ Google Sheets ở Sprint 10.');
+  closeModal('addModal');
+}
+
+function exportData() {
+  alert('📊 Xuất Excel\n\nTính năng xuất Excel sẽ tích hợp đầy đủ ở Sprint 9 – Báo cáo & Thống kê.');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+// Init
+renderTable();
+</script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/integration.js"></script>
+</body>
+</html>

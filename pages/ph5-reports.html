@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Báo cáo & Thống kê | UBKT HQKV8</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --red:#CC0000;--red-dark:#990000;--red-light:#ffecec;
+      --gold:#D4A017;--gold-lt:#FFF8E1;
+      --navy:#003087;--navy-lt:#E8F0FE;
+      --green:#1A7A4A;--green-lt:#E8F5EE;
+      --teal:#006064;--teal-lt:#E0F7FA;
+      --orange:#D46B00;--orange-lt:#FFF3E0;
+      --purple:#5B2C8D;--purple-lt:#F3E8FF;
+      --gray1:#1C1C2E;--gray2:#3D3D5C;--gray3:#7B7B9B;
+      --gray4:#C8C8DC;--gray5:#F0F0F8;--white:#fff;
+      --sidebar-w:240px;--header-h:64px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,.08);
+      --shadow-md:0 4px 16px rgba(0,0,0,.12);
+      --radius:10px;--radius-sm:6px;
+    }
+    html,body{height:100%;font-family:'Be Vietnam Pro',sans-serif;background:var(--gray5);color:var(--gray1);font-size:14px;}
+    ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:var(--gray4);border-radius:3px;}
+
+    .header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 50%,#A00000 100%);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.25);}
+    .header-left{display:flex;align-items:center;gap:14px;}
+    .logo-hq{width:50px;height:50px;border-radius:50%;background:#CC0000;overflow:hidden;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));flex-shrink:0;}
+    .logo-hq img{width:50px;height:50px;object-fit:cover;border-radius:50%;display:block;}
+    .header-divider{width:1px;height:36px;background:rgba(255,255,255,.25);margin:0 6px;}
+    .header-title .main{font-size:14px;font-weight:700;color:#fff;}
+    .header-title .sub{font-size:11px;color:rgba(255,255,255,.85);margin-top:1px;}
+    .header-right{display:flex;align-items:center;gap:10px;}
+    .user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:24px;padding:5px 12px 5px 5px;border:1px solid rgba(255,255,255,.2);}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--red-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
+    .user-info .name{font-size:12px;font-weight:600;color:#fff;}
+    .user-info .role{font-size:10px;color:rgba(255,255,255,.8);}
+    .header-back{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.3);transition:all .2s;}
+    .header-back:hover{background:rgba(255,255,255,.2);}
+
+    .layout{display:flex;padding-top:var(--header-h);min-height:100vh;}
+    .sidebar{position:fixed;left:0;top:var(--header-h);bottom:0;width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray4);overflow-y:auto;z-index:900;display:flex;flex-direction:column;}
+    .sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--gray3);text-transform:uppercase;padding:16px 16px 6px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--gray2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;position:relative;}
+    .nav-item:hover{background:var(--gray5);color:var(--red);}
+    .nav-item.active{background:var(--red-light);color:var(--red);font-weight:600;}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);border-radius:0 2px 2px 0;}
+    .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;}
+    .nav-badge.green{background:var(--green);}
+    .nav-badge.orange{background:var(--orange);}
+    .sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--gray4);font-size:11px;color:var(--gray3);line-height:1.6;}
+
+    .main{margin-left:var(--sidebar-w);flex:1;padding:20px;}
+
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+    .page-title{font-size:20px;font-weight:700;color:var(--gray1);}
+    .page-sub{font-size:12px;color:var(--gray3);margin-top:3px;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Be Vietnam Pro',sans-serif;transition:all .2s;}
+    .btn-primary{background:var(--red);color:white;}
+    .btn-primary:hover{background:var(--red-dark);}
+    .btn-outline{background:white;color:var(--gray2);border:1px solid var(--gray4);}
+    .btn-outline:hover{border-color:var(--red);color:var(--red);}
+    .btn-green{background:var(--green);color:white;}
+    .btn-green:hover{background:#14633B;}
+    .btn-navy{background:var(--navy);color:white;}
+    .btn-navy:hover{background:#002060;}
+
+    /* PERIOD SELECTOR */
+    .period-bar{background:white;border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow-sm);margin-bottom:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .period-label{font-size:12px;font-weight:600;color:var(--gray2);}
+    .period-tabs{display:flex;gap:4px;}
+    .period-tab{padding:5px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;color:var(--gray3);transition:all .2s;border:1px solid var(--gray4);background:white;font-family:'Be Vietnam Pro',sans-serif;}
+    .period-tab.active{background:var(--red);color:white;border-color:var(--red);}
+    .period-sep{width:1px;height:24px;background:var(--gray4);}
+    .report-type-select{padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--gray4);font-size:12px;font-family:'Be Vietnam Pro',sans-serif;color:var(--gray2);background:white;cursor:pointer;}
+    .report-type-select:focus{outline:none;border-color:var(--red);}
+
+    /* KPI */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .kpi-card{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);border-top:3px solid transparent;position:relative;overflow:hidden;}
+    .kpi-card.red{border-top-color:var(--red);}
+    .kpi-card.green{border-top-color:var(--green);}
+    .kpi-card.blue{border-top-color:var(--navy);}
+    .kpi-card.orange{border-top-color:var(--orange);}
+    .kpi-card.gold{border-top-color:var(--gold);}
+    .kpi-card.purple{border-top-color:var(--purple);}
+    .kpi-label{font-size:11px;color:var(--gray3);font-weight:500;margin-bottom:6px;}
+    .kpi-value{font-size:28px;font-weight:700;line-height:1;}
+    .kpi-card.red .kpi-value{color:var(--red);}
+    .kpi-card.green .kpi-value{color:var(--green);}
+    .kpi-card.blue .kpi-value{color:var(--navy);}
+    .kpi-card.orange .kpi-value{color:var(--orange);}
+    .kpi-card.gold .kpi-value{color:var(--gold);}
+    .kpi-card.purple .kpi-value{color:var(--purple);}
+    .kpi-sub{font-size:10px;color:var(--gray3);margin-top:4px;}
+    .kpi-trend{font-size:11px;font-weight:600;margin-top:4px;}
+    .kpi-trend.up{color:var(--green);}
+    .kpi-trend.down{color:var(--red);}
+    .kpi-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:.2;}
+
+    /* CHART GRID */
+    .chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;}
+    .chart-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px;overflow:hidden;}
+    .chart-card.wide{grid-column:1/-1;}
+    .chart-title{font-size:13px;font-weight:700;color:var(--gray1);margin-bottom:4px;}
+    .chart-sub{font-size:11px;color:var(--gray3);margin-bottom:14px;}
+    .chart-wrap{position:relative;height:220px;}
+    .chart-wrap.tall{height:280px;}
+
+    /* SUMMARY TABLE */
+    .table-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:20px;}
+    .table-card-header{padding:14px 16px;border-bottom:1px solid var(--gray5);display:flex;align-items:center;justify-content:space-between;}
+    .table-card-title{font-size:13px;font-weight:700;color:var(--gray1);}
+    .table-card-sub{font-size:11px;color:var(--gray3);margin-top:2px;}
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{background:var(--gray5);padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+    thead th.center{text-align:center;}
+    tbody tr{border-bottom:1px solid var(--gray5);transition:background .15s;}
+    tbody tr:last-child{border-bottom:none;}
+    tbody tr:hover{background:#fafafa;}
+    td{padding:9px 14px;font-size:12px;color:var(--gray2);vertical-align:middle;}
+    td.center{text-align:center;}
+    .td-name{font-weight:600;color:var(--gray1);}
+    .td-zero{color:var(--gray4);}
+
+    /* MINI STATUS DOTS */
+    .dots{display:flex;gap:3px;justify-content:center;}
+    .dot{width:8px;height:8px;border-radius:50%;}
+    .dot.done{background:var(--green);}
+    .dot.progress{background:var(--teal);}
+    .dot.overdue{background:var(--red);}
+    .dot.todo{background:var(--gray4);}
+
+    /* BADGE */
+    .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;}
+    .badge-done{background:var(--green-lt);color:var(--green);}
+    .badge-progress{background:var(--teal-lt);color:var(--teal);}
+    .badge-todo{background:var(--gray5);color:var(--gray3);}
+    .badge-overdue{background:#FFF0F0;color:var(--red);}
+
+    /* PROG MINI */
+    .prog-cell{display:flex;align-items:center;gap:6px;}
+    .prog-bar{flex:1;height:5px;background:var(--gray5);border-radius:3px;overflow:hidden;min-width:50px;}
+    .prog-fill{height:100%;border-radius:3px;}
+    .prog-fill.g{background:var(--green);}
+    .prog-fill.t{background:var(--teal);}
+    .prog-fill.o{background:var(--orange);}
+    .prog-fill.r{background:var(--red);}
+
+    /* REPORT TEMPLATES */
+    .report-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px;}
+    .report-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px;cursor:pointer;transition:all .2s;border:1px solid transparent;}
+    .report-card:hover{box-shadow:var(--shadow-md);border-color:var(--red);transform:translateY(-2px);}
+    .report-card-icon{font-size:28px;margin-bottom:10px;}
+    .report-card-title{font-size:13px;font-weight:700;color:var(--gray1);margin-bottom:4px;}
+    .report-card-desc{font-size:11px;color:var(--gray3);line-height:1.5;}
+    .report-card-footer{margin-top:12px;display:flex;justify-content:space-between;align-items:center;}
+    .report-card-period{font-size:10px;color:var(--gray3);}
+    .report-card-btn{font-size:10px;font-weight:700;color:var(--red);cursor:pointer;}
+
+    /* SECTION LABEL */
+    .section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray3);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--gray5);}
+
+    @media print {
+      .header,.sidebar,.period-bar,.page-header .btn,.report-grid{display:none!important;}
+      .main{margin-left:0!important;padding:10px!important;}
+      .chart-card,.kpi-card,.table-card{box-shadow:none!important;border:1px solid #ddd;}
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo-hq"><img src="../logo-haiquan.png" alt="Hải quan Việt Nam"/></div>
+    <div class="header-divider"></div>
+    <div class="header-title">
+      <div class="main">HỆ THỐNG QUẢN LÝ KTGS & KỶ LUẬT ĐẢNG</div>
+      <div class="sub">Ủy ban Kiểm tra Đảng ủy Chi cục Hải quan Khu vực VIII</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="../index.html" class="header-back">← Tổng quan</a>
+    <div class="user-badge">
+      <div class="user-avatar">K8</div>
+      <div class="user-info">
+        <div class="name">UBKT Đảng ủy KV8</div>
+        <div class="role">Thường trực UBKT</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section-label">Tổng quan</div>
+    <a href="../index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <div class="sidebar-section-label">Nghiệp vụ</div>
+    <a href="ph1-library.html" class="nav-item"><span class="nav-icon">📚</span>Thư viện nghiệp vụ</a>
+    <a href="ph2-programs.html" class="nav-item"><span class="nav-icon">📋</span>Chương trình KTGS</a>
+    <a href="ph3-cases.html" class="nav-item"><span class="nav-icon">📁</span>Hồ sơ cuộc KTGS<span class="nav-badge">3</span></a>
+    <a href="ph4-conclusions.html" class="nav-item"><span class="nav-icon">✅</span>Theo dõi kết luận<span class="nav-badge orange">5</span></a>
+    <a href="ph5-reports.html" class="nav-item active"><span class="nav-icon">📊</span>Báo cáo & Thống kê</a>
+    <a href="theo-doi-chibo.html" class="nav-item"><span class="nav-icon">🗂️</span>Tiến độ KTGS Chi bộ<span class="nav-badge green">13</span></a>
+    <div class="sidebar-section-label">Hệ thống</div>
+    <a href="#" class="nav-item"><span class="nav-icon">👥</span>Quản lý người dùng</a>
+    <a href="#" class="nav-item"><span class="nav-icon">⚙️</span>Cài đặt hệ thống</a>
+    <a href="#" class="nav-item"><span class="nav-icon">📜</span>Nhật ký thao tác</a>
+    <div class="sidebar-footer">Phiên bản: 1.0.0<br/>Nhiệm kỳ: 2025 – 2030</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">📊 Báo cáo & Thống kê KTGS</div>
+        <div class="page-sub">UBKT Đảng ủy Chi cục Hải quan Khu vực VIII · Cập nhật: 21/06/2026</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-outline" onclick="window.print()">🖨️ In báo cáo</button>
+        <button class="btn btn-navy" onclick="alert('Xuất Excel – kết nối Google Sheets ở Sprint 10')">📥 Xuất Excel</button>
+        <button class="btn btn-primary" onclick="alert('Tạo báo cáo Word – Sprint 10')">📄 Tạo báo cáo</button>
+      </div>
+    </div>
+
+    <!-- PERIOD SELECTOR -->
+    <div class="period-bar">
+      <span class="period-label">Kỳ báo cáo:</span>
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setPeriod(this,'q2')">Quý II/2026</button>
+        <button class="period-tab" onclick="setPeriod(this,'6m')">6 tháng/2026</button>
+        <button class="period-tab" onclick="setPeriod(this,'year')">Năm 2026</button>
+        <button class="period-tab" onclick="setPeriod(this,'khoa')">Toàn khóa</button>
+      </div>
+      <div class="period-sep"></div>
+      <span class="period-label">Loại báo cáo:</span>
+      <select class="report-type-select" onchange="switchReportType(this.value)">
+        <option value="tong">Tổng hợp chung</option>
+        <option value="chibo">Theo Chi bộ</option>
+        <option value="ketluan">Tình trạng kết luận</option>
+        <option value="hosodien">Hồ sơ điện tử</option>
+      </select>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card red"><div class="kpi-label">Tổng cuộc KTGS</div><div class="kpi-value" id="k1">20</div><div class="kpi-sub">KT: 12 · GS: 8 · Năm 2026</div><div class="kpi-trend up">↑ +3 so với cùng kỳ 2025</div><div class="kpi-icon">🔍</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Hoàn thành</div><div class="kpi-value" id="k2">6</div><div class="kpi-sub">30% tổng số cuộc</div><div class="kpi-trend up">↑ Đúng tiến độ</div><div class="kpi-icon">✅</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Đang thực hiện</div><div class="kpi-value" id="k3">7</div><div class="kpi-sub">35% tiến độ trung bình</div><div class="kpi-trend up">→ Trong kế hoạch</div><div class="kpi-icon">⏳</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Chậm / Quá hạn</div><div class="kpi-value" id="k4">3</div><div class="kpi-sub">15% tổng số cuộc</div><div class="kpi-trend down">↑ Cần xử lý</div><div class="kpi-icon">⚠️</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Nhiệm vụ kết luận</div><div class="kpi-value">16</div><div class="kpi-sub">9 đã hoàn thành (56%)</div><div class="kpi-trend down">2 quá hạn</div><div class="kpi-icon">📋</div></div>
+      <div class="kpi-card purple"><div class="kpi-label">Tỷ lệ hoàn thành</div><div class="kpi-value">30%</div><div class="kpi-sub">6/20 cuộc KTGS</div><div class="kpi-trend up">↑ Mục tiêu: 100%/năm</div><div class="kpi-icon">📈</div></div>
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="section-title">Biểu đồ phân tích</div>
+    <div class="chart-grid">
+
+      <!-- Chart 1: Cột - Tiến độ theo loại hình & quý -->
+      <div class="chart-card">
+        <div class="chart-title">Tiến độ KTGS theo Quý năm 2026</div>
+        <div class="chart-sub">Số cuộc Kiểm tra và Giám sát theo từng Quý</div>
+        <div class="chart-wrap"><canvas id="chartBar"></canvas></div>
+      </div>
+
+      <!-- Chart 2: Donut - Tỷ lệ trạng thái -->
+      <div class="chart-card">
+        <div class="chart-title">Tỷ lệ trạng thái cuộc KTGS</div>
+        <div class="chart-sub">Năm 2026 · Tổng 20 cuộc</div>
+        <div class="chart-wrap"><canvas id="chartDonut"></canvas></div>
+      </div>
+
+      <!-- Chart 3: Line - Xu hướng toàn khóa -->
+      <div class="chart-card">
+        <div class="chart-title">Xu hướng KTGS toàn khóa 2025–2030</div>
+        <div class="chart-sub">Số cuộc kiểm tra, giám sát theo năm (thực tế + dự kiến)</div>
+        <div class="chart-wrap"><canvas id="chartLine"></canvas></div>
+      </div>
+
+      <!-- Chart 4: Horizontal bar - Chi bộ -->
+      <div class="chart-card">
+        <div class="chart-title">Tỷ lệ hoàn thành theo Chi bộ</div>
+        <div class="chart-sub">Top 8 Chi bộ · Toàn khóa 2025–2030</div>
+        <div class="chart-wrap tall"><canvas id="chartChiBo"></canvas></div>
+      </div>
+    </div>
+
+    <!-- CHART: Nhiệm vụ kết luận -->
+    <div class="chart-grid" style="grid-template-columns:1fr 2fr;margin-bottom:20px">
+      <div class="chart-card">
+        <div class="chart-title">Tình trạng nhiệm vụ kết luận</div>
+        <div class="chart-sub">Từ 6 kết luận KTGS · 16 nhiệm vụ</div>
+        <div class="chart-wrap"><canvas id="chartKetLuan"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Phân bổ cuộc KTGS theo lĩnh vực nội dung</div>
+        <div class="chart-sub">Năm 2026 · Phân loại theo nội dung chính</div>
+        <div class="chart-wrap"><canvas id="chartLinhVuc"></canvas></div>
+      </div>
+    </div>
+
+    <!-- TABLE: Tổng hợp theo Chi bộ -->
+    <div class="section-title">Bảng tổng hợp theo Chi bộ</div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <div>
+          <div class="table-card-title">Tổng hợp công tác KTGS theo Chi bộ – Năm 2026</div>
+          <div class="table-card-sub">13 Chi bộ trực thuộc Đảng ủy Chi cục Hải quan Khu vực VIII</div>
+        </div>
+        <button class="btn btn-outline" style="font-size:11px" onclick="alert('Xuất bảng Excel – Sprint 10')">📥 Xuất Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Chi bộ</th>
+              <th class="center">Tổng KT</th>
+              <th class="center">Tổng GS</th>
+              <th class="center">Hoàn thành</th>
+              <th class="center">Đang TH</th>
+              <th class="center">Quá hạn</th>
+              <th class="center">NV kết luận</th>
+              <th>Tiến độ TB</th>
+              <th class="center">Đánh giá</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+          <tfoot>
+            <tr style="background:var(--gray5);font-weight:700">
+              <td colspan="2" style="font-weight:700;color:var(--gray1)">TỔNG CỘNG</td>
+              <td class="center" style="font-weight:700;color:var(--red)">12</td>
+              <td class="center" style="font-weight:700;color:var(--navy)">8</td>
+              <td class="center" style="font-weight:700;color:var(--green)">6</td>
+              <td class="center" style="font-weight:700;color:var(--teal)">7</td>
+              <td class="center" style="font-weight:700;color:var(--orange)">3</td>
+              <td class="center" style="font-weight:700">16</td>
+              <td><div class="prog-cell"><div class="prog-bar"><div class="prog-fill t" style="width:35%"></div></div><span style="font-size:11px;font-weight:700">35%</span></div></td>
+              <td class="center">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- BÁO CÁO MẪU -->
+    <div class="section-title">Mẫu báo cáo sẵn có</div>
+    <div class="report-grid">
+      <div class="report-card" onclick="alert('Xuất Báo cáo tổng hợp KTGS – Sprint 10 tích hợp Google Docs')">
+        <div class="report-card-icon">📄</div>
+        <div class="report-card-title">BC Tổng hợp KTGS</div>
+        <div class="report-card-desc">Báo cáo tổng hợp công tác kiểm tra, giám sát theo kỳ (tháng/quý/năm) gửi cấp trên.</div>
+        <div class="report-card-footer"><span class="report-card-period">Định kỳ hàng quý</span><span class="report-card-btn">Tạo →</span></div>
+      </div>
+      <div class="report-card" onclick="alert('Xuất BC kết quả thực hiện chương trình KTGS – Sprint 10')">
+        <div class="report-card-icon">📋</div>
+        <div class="report-card-title">BC Thực hiện chương trình</div>
+        <div class="report-card-desc">Báo cáo kết quả thực hiện chương trình kiểm tra, giám sát so với kế hoạch năm.</div>
+        <div class="report-card-footer"><span class="report-card-period">6 tháng, năm</span><span class="report-card-btn">Tạo →</span></div>
+      </div>
+      <div class="report-card" onclick="alert('Xuất BC theo dõi kết luận – Sprint 10')">
+        <div class="report-card-icon">✅</div>
+        <div class="report-card-title">BC Theo dõi kết luận</div>
+        <div class="report-card-desc">Tổng hợp tình trạng thực hiện các nhiệm vụ sau kết luận kiểm tra, giám sát.</div>
+        <div class="report-card-footer"><span class="report-card-period">Hàng tháng</span><span class="report-card-btn">Tạo →</span></div>
+      </div>
+      <div class="report-card" onclick="alert('Xuất BC phục vụ BCH – Sprint 10')">
+        <div class="report-card-icon">🗓️</div>
+        <div class="report-card-title">BC Phục vụ họp BCH</div>
+        <div class="report-card-desc">Tóm tắt điều hành công tác KTGS phục vụ họp Ban Chấp hành Đảng ủy định kỳ.</div>
+        <div class="report-card-footer"><span class="report-card-period">Hàng tháng</span><span class="report-card-btn">Tạo →</span></div>
+      </div>
+      <div class="report-card" onclick="alert('Xuất BC theo Chi bộ – Sprint 10')">
+        <div class="report-card-icon">🏢</div>
+        <div class="report-card-title">BC Theo Chi bộ</div>
+        <div class="report-card-desc">Thống kê chi tiết tình trạng KTGS từng Chi bộ, phát hiện Chi bộ chưa được kiểm tra giám sát.</div>
+        <div class="report-card-footer"><span class="report-card-period">Năm, toàn khóa</span><span class="report-card-btn">Tạo →</span></div>
+      </div>
+      <div class="report-card" onclick="alert('Xuất BC sơ kết/tổng kết – Sprint 10')">
+        <div class="report-card-icon">📊</div>
+        <div class="report-card-title">BC Sơ kết / Tổng kết</div>
+        <div class="report-card-desc">Báo cáo sơ kết 6 tháng, tổng kết năm về công tác KTGS toàn Đảng bộ.</div>
+        <div class="report-card-footer"><span class="report-card-period">6 tháng, năm</span><span class="report-card-btn">Tạo →</span></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// === DATA ===
+const CHI_BO_DATA = [
+  {name:'CB Văn phòng',          kt:1,gs:2,done:1,prog:1,over:0,todo:1,nv:3,pct:40},
+  {name:'CB Phòng TCCB',         kt:1,gs:1,done:2,prog:0,over:0,todo:0,nv:5,pct:100},
+  {name:'CB Phòng Nghiệp vụ',    kt:2,gs:1,done:0,prog:1,over:2,todo:0,nv:6,pct:30},
+  {name:'CB Phòng QLRR',         kt:1,gs:1,done:0,prog:0,over:0,todo:2,nv:0,pct:0},
+  {name:'CB Phòng CNTT',         kt:0,gs:1,done:0,prog:1,over:0,todo:0,nv:0,pct:20},
+  {name:'CB Đội PT&KTSTQ',       kt:1,gs:1,done:1,prog:1,over:0,todo:0,nv:0,pct:50},
+  {name:'CB Đội KSHQ',           kt:1,gs:1,done:0,prog:2,over:0,todo:0,nv:2,pct:40},
+  {name:'CB HQCK QT Móng Cái',   kt:2,gs:1,done:0,prog:1,over:1,todo:1,nv:0,pct:25},
+  {name:'CB HQCK Hoành Mô',      kt:1,gs:0,done:1,prog:0,over:0,todo:0,nv:0,pct:100},
+  {name:'CB HQCK Bắc Phong Sinh',kt:1,gs:0,done:1,prog:0,over:0,todo:0,nv:0,pct:100},
+  {name:'CB HQCK cảng Hòn Gai',  kt:1,gs:1,done:2,prog:0,over:0,todo:0,nv:2,pct:100},
+  {name:'CB HQCK cảng Cẩm Phả',  kt:0,gs:1,done:0,prog:1,over:0,todo:0,nv:0,pct:20},
+  {name:'CB HQCK cảng Vạn Gia',  kt:0,gs:0,done:0,prog:0,over:0,todo:0,nv:0,pct:0},
+];
+
+// === RENDER TABLE ===
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = CHI_BO_DATA.map((cb,i) => {
+    const pClass = cb.pct===100?'g':cb.pct>=50?'t':cb.pct>0?'o':'r';
+    const rating = cb.over>0?'<span class="badge badge-overdue">Cần theo dõi</span>':cb.pct===100?'<span class="badge badge-done">Tốt</span>':cb.done+cb.prog>0?'<span class="badge badge-progress">Bình thường</span>':'<span class="badge badge-todo">Chưa có</span>';
+    return `<tr>
+      <td style="color:var(--gray3);font-size:11px">${i+1}</td>
+      <td class="td-name">${cb.name}</td>
+      <td class="center ${cb.kt===0?'td-zero':''}">${cb.kt||'—'}</td>
+      <td class="center ${cb.gs===0?'td-zero':''}">${cb.gs||'—'}</td>
+      <td class="center" style="color:var(--green);font-weight:${cb.done>0?700:400}">${cb.done||'—'}</td>
+      <td class="center" style="color:var(--teal)">${cb.prog||'—'}</td>
+      <td class="center" style="color:${cb.over>0?'var(--red)':'var(--gray4)'};font-weight:${cb.over>0?700:400}">${cb.over||'—'}</td>
+      <td class="center">${cb.nv||'—'}</td>
+      <td><div class="prog-cell"><div class="prog-bar"><div class="prog-fill ${pClass}" style="width:${cb.pct}%"></div></div><span style="font-size:11px;font-weight:600">${cb.pct}%</span></div></td>
+      <td class="center">${rating}</td>
+    </tr>`;
+  }).join('');
+}
+
+// === CHARTS ===
+const chartDefaults = {
+  font: { family: "'Be Vietnam Pro', sans-serif" },
+  plugins: { legend: { labels: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } } } }
+};
+
+// Bar chart - by quarter
+const ctxBar = document.getElementById('chartBar').getContext('2d');
+new Chart(ctxBar, {
+  type: 'bar',
+  data: {
+    labels: ['Quý I', 'Quý II', 'Quý III', 'Quý IV'],
+    datasets: [
+      { label: 'Kiểm tra', data: [3, 5, 2, 2], backgroundColor: '#CC0000CC', borderRadius: 5, borderSkipped: false },
+      { label: 'Giám sát', data: [2, 3, 2, 1], backgroundColor: '#003087CC', borderRadius: 5, borderSkipped: false },
+      { label: 'Hoàn thành', data: [3, 2, 0, 0], backgroundColor: '#1A7A4ACC', borderRadius: 5, borderSkipped: false },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } } } },
+    scales: {
+      x: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } } },
+      y: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 }, stepSize: 1 }, beginAtZero: true }
+    }
+  }
+});
+
+// Donut chart - status ratio
+const ctxDonut = document.getElementById('chartDonut').getContext('2d');
+new Chart(ctxDonut, {
+  type: 'doughnut',
+  data: {
+    labels: ['Hoàn thành', 'Đang thực hiện', 'Chậm TĐ', 'Quá hạn', 'Chưa bắt đầu'],
+    datasets: [{
+      data: [6, 7, 2, 1, 4],
+      backgroundColor: ['#1A7A4A','#006064','#D46B00','#CC0000','#C8C8DC'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '65%',
+    plugins: {
+      legend: { position: 'right', labels: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 }, padding: 10 } }
+    }
+  }
+});
+
+// Line chart - trend by year
+const ctxLine = document.getElementById('chartLine').getContext('2d');
+new Chart(ctxLine, {
+  type: 'line',
+  data: {
+    labels: ['2025', '2026', '2027*', '2028*', '2029*', '2030*'],
+    datasets: [
+      { label: 'Kiểm tra', data: [10, 12, 14, 13, 14, 12], borderColor: '#CC0000', backgroundColor: 'rgba(204,0,0,.08)', tension: 0.4, pointBackgroundColor: '#CC0000', pointRadius: 4 },
+      { label: 'Giám sát', data: [7, 8, 9, 10, 9, 8], borderColor: '#003087', backgroundColor: 'rgba(0,48,135,.08)', tension: 0.4, pointBackgroundColor: '#003087', pointRadius: 4 },
+      { label: 'Hoàn thành', data: [17, 6, null, null, null, null], borderColor: '#1A7A4A', backgroundColor: 'rgba(26,122,74,.08)', tension: 0.4, pointBackgroundColor: '#1A7A4A', pointRadius: 4, borderDash: [0,0] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } } } },
+    scales: {
+      x: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } } },
+      y: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 }, stepSize: 2 }, beginAtZero: true }
+    }
+  }
+});
+
+// Horizontal bar - Chi bộ completion
+const ctxCB = document.getElementById('chartChiBo').getContext('2d');
+const top8 = CHI_BO_DATA.filter(cb => cb.kt+cb.gs > 0).slice(0, 8);
+new Chart(ctxCB, {
+  type: 'bar',
+  data: {
+    labels: top8.map(cb => cb.name.replace('CB ','').replace('HQCK ','').replace('cảng ','cảng\n')),
+    datasets: [{
+      label: 'Tỷ lệ hoàn thành (%)',
+      data: top8.map(cb => cb.pct),
+      backgroundColor: top8.map(cb => cb.pct===100?'#1A7A4A':cb.pct>=50?'#006064':cb.over>0?'#CC0000':'#D46B00'),
+      borderRadius: 4, borderSkipped: false
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { max: 100, ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 10 }, callback: v => v + '%' } },
+      y: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 10 } } }
+    }
+  }
+});
+
+// Donut - Nhiệm vụ kết luận
+const ctxKL = document.getElementById('chartKetLuan').getContext('2d');
+new Chart(ctxKL, {
+  type: 'doughnut',
+  data: {
+    labels: ['Đã hoàn thành', 'Đang thực hiện', 'Chưa thực hiện', 'Quá hạn'],
+    datasets: [{
+      data: [9, 3, 2, 2],
+      backgroundColor: ['#1A7A4A','#006064','#C8C8DC','#CC0000'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '60%',
+    plugins: { legend: { position: 'bottom', labels: { font: { family: "'Be Vietnam Pro', sans-serif", size: 10 }, padding: 8 } } }
+  }
+});
+
+// Bar - Lĩnh vực nội dung
+const ctxLV = document.getElementById('chartLinhVuc').getContext('2d');
+new Chart(ctxLV, {
+  type: 'bar',
+  data: {
+    labels: ['Chấp hành Điều lệ Đảng', 'Tài chính Đảng', 'NQ & Chỉ thị', 'Đạo đức đảng viên', 'Quy chế dân chủ', 'Đơn thư tố cáo'],
+    datasets: [
+      { label: 'Kiểm tra', data: [4, 1, 3, 2, 0, 1], backgroundColor: '#CC0000AA', borderRadius: 4, borderSkipped: false },
+      { label: 'Giám sát', data: [0, 0, 3, 0, 2, 0], backgroundColor: '#003087AA', borderRadius: 4, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } } } },
+    scales: {
+      x: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 10 }, maxRotation: 30 } },
+      y: { ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 11 }, stepSize: 1 }, beginAtZero: true }
+    }
+  }
+});
+
+function setPeriod(el, period) {
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // In Sprint 10, this will filter data from Google Sheets
+  const labels = {q2:'Quý II/2026', '6m':'6 tháng/2026', year:'Năm 2026', khoa:'Toàn khóa 2025–2030'};
+  document.querySelector('.page-sub').textContent = `UBKT Đảng ủy Chi cục Hải quan Khu vực VIII · Kỳ: ${labels[period]} · Cập nhật: 21/06/2026`;
+}
+
+function switchReportType(val) {
+  // In Sprint 10 this will dynamically switch data sources
+  const msgs = {tong:'Hiển thị tổng hợp chung',chibo:'Hiển thị theo Chi bộ',ketluan:'Hiển thị tình trạng kết luận',hosodien:'Hiển thị hồ sơ điện tử'};
+  // Demo: no visual change for now
+}
+
+renderTable();
+</script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/integration.js"></script>
+</body>
+</html>
